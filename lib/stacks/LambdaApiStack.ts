@@ -1,15 +1,9 @@
-import * as sst from "@serverless-stack/resources";
+import { Stack, App, StackProps } from "@aws-cdk/core";
 
-export default class DynamoDBStack extends sst.Stack {
-  constructor(scope: sst.App, id: string, props?: sst.StackProps) {
+export default class LambdaApiStack extends Stack {
+  constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
-    
-    const app: any = this.node.root;
-
-		const handler = new lambda.Function(this, "", {
-			runtime: lambda.Runtime.NODEJS_10_X,
-			code: lambda.Code.fromAsset(""),
-			handler: "handler"
-		});
+		
+		
   }
 }

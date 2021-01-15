@@ -3,17 +3,21 @@ import { Function, FunctionProps, Code, Runtime } from "@aws-cdk/aws-lambda";
 import { App } from "@serverless-stack/resources";
 
 export interface LambdaApiGatewayProps extends FunctionProps {
-	// Any props to pass to this generic table should be added here
+	// Any props to pass to this generic lambda API should be added here
+	functionNames: Array<String>
 }
 
 export class LambdaApiGateway extends Construct {
-	constructor(scope: App, id: string,  props?: LambdaApiGatewayProps) {
+
+	constructor(scope: App, id: string,  props: LambdaApiGatewayProps) {
     super(scope, id);
-    
-		// const handler = new Function(this, "", {
-		// 	runtime: Runtime.NODEJS_10_X,
-		// 	code: Code.fromAsset(""),
-		// 	handler: "handler"
-		// });
+		
+		for (const functionName of props.functionNames) {
+			const handler = new Function(this, "", {
+				runtime: Runtime.NODEJS_10_X,
+				code: Code.fromAsset("./savour-api-lib"),
+				handler: `${id}/${functionName}.main`
+			});
+    }
   }
 }
