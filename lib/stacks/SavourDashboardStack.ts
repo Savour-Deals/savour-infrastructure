@@ -1,5 +1,4 @@
-import * as sst from "@serverless-stack/resources";
-import DynamoDBStack from './DynamoDBStack';
+import { App, Stack, StackProps } from "@serverless-stack/resources";
 
 interface DynamoDbTableDefintion {
   tableName: string;
@@ -14,8 +13,8 @@ const DYNAMO_TABLES: Array<DynamoDbTableDefintion> = [
   { tableName: 'subscriber_users', partitionKey: 'mobile_number' },
 ];
 
-export default class SavourDashboardStack extends sst.Stack {
-  constructor(scope: sst.App, id: string, props?: sst.StackProps) {
+export default class SavourDashboardStack extends Stack {
+  constructor(scope: App, id: string, props?: StackProps) {
     super(scope,id,props);
 
     this.createDynamoTables(DYNAMO_TABLES);
