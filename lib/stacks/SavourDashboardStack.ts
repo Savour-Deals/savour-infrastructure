@@ -28,8 +28,7 @@ export default class SavourDashboardStack extends Stack {
     for (const table of  tables) {
       const { tableName, partitionKey } = table;
       
-      this.createTable(tableName + '_dev', partitionKey);
-      this.createTable(tableName + '_prod', partitionKey);
+      this.createTable(tableName, partitionKey);
     }
   }
 
@@ -38,6 +37,7 @@ export default class SavourDashboardStack extends Stack {
     
     try {
       const createdTable = new dynamodb.Table(this, tableName, {
+        billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
         partitionKey: {name: partitionKey, type: dynamodb.AttributeType.STRING},
       });
 
