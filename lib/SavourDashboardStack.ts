@@ -12,9 +12,7 @@ const DYNAMO_TABLES: Array<DynamoDbTableDefintion> = [
   { tableName: 'push_table', partitionKey: 'unique_id' },
   { tableName: 'redirect_urls', partitionKey: 'unique_id' },
   { tableName: 'subscriber_users', partitionKey: 'mobile_number' },
-  { tableName: 'unclaimed_buttons', partitionKey: 'button_id' },
-
-]
+];
 
 export default class SavourDashboardStack extends sst.Stack {
   constructor(scope: sst.App, id: string, props?: sst.StackProps) {
