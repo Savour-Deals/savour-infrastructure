@@ -4,7 +4,7 @@ import { App } from "@serverless-stack/resources";
 
 export interface LambdaApiGatewayProps extends FunctionProps {
 	// Any props to pass to this generic lambda API should be added here
-	functionNames: Array<String>
+	functionNames: Array<string>
 }
 
 export class LambdaApiGateway extends Construct {

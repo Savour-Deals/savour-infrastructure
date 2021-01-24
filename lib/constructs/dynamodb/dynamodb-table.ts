@@ -2,9 +2,7 @@ import { Construct, CfnOutput } from "@aws-cdk/core";
 import { Table, TableProps, BillingMode, AttributeType } from "@aws-cdk/aws-dynamodb";
 import { App } from "@serverless-stack/resources";
 
-export interface DynamoDBTableProps extends TableProps {
-	// Any props to pass to this generic table should be added here
-}
+export type DynamoDBTableProps = TableProps
 
 export class DynamoDBTable extends Construct {
 	constructor(scope: App, id: string, tableName: string, partitionKey: string, props?: DynamoDBTableProps) {
