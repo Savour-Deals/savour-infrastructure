@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior, ContentHandling } from "@aws-cdk/aws-apigateway";
+import { RestApi, PassthroughBehavior, AuthorizationType } from "@aws-cdk/aws-apigateway";
 
 export class UrlApiStack extends SavourApiNestedStack {
   readonly name = "url";
@@ -16,14 +16,14 @@ export class UrlApiStack extends SavourApiNestedStack {
 
     const apiResource = api.root.addResource("url");
 
-    this.apiLambdas.push(new SavourApiLambda(this, {
-      api: this.name,
-      operation: "shorten",
-      restApi: {
-        resource: apiResource,
-        httpMethod: HttpMethod.POST,
-      }
-    }));
+    // this.apiLambdas.push(new SavourApiLambda(this, {
+    //   api: this.name,
+    //   operation: "shorten",
+    //   restApi: {
+    //     resource: apiResource,
+    //     httpMethod: HttpMethod.POST,
+    //   }
+    // }));
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
@@ -32,7 +32,8 @@ export class UrlApiStack extends SavourApiNestedStack {
         resource: apiResource,
         httpMethod: HttpMethod.GET,
         pathParameter: "shortid",
-        LambdaIntegrationOptions: {
+        lambdaIntegrationOptions: {
+          proxy: false,
           requestTemplates: {
             'application/json':  JSON.stringify({ token:  "$input.params('shortid')" })
           },
@@ -59,7 +60,7 @@ export class UrlApiStack extends SavourApiNestedStack {
                 'method.response.header.Content-Type': "'text/html'"
               }
             }
-          ]
+          ],
         }
       }
     }));

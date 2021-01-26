@@ -19,14 +19,14 @@ export default class SavourDashboardStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope,id,props);
 
-    this.createDynamoTables(DYNAMO_TABLES);
+    // this.createDynamoTables(DYNAMO_TABLES);
 
   }
 
-  createDynamoTables(tables: Array<object>) {
-    for (const table of  tables) {
+  // createDynamoTables(tables: Array<object>) {
+  //   for (const table of  tables) {
       
-    }
-  }
+  //   }
+  // }
 }
 

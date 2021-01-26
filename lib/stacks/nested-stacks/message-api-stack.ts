@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior } from "@aws-cdk/aws-apigateway"
+import { RestApi, PassthroughBehavior, AuthorizationType } from "@aws-cdk/aws-apigateway"
 import { StringParameter }from '@aws-cdk/aws-ssm';
 import { Constants } from "../../constants/constants";
 import { MappingTemplate } from '@aws-cdk/aws-appsync';
@@ -12,18 +12,18 @@ export class MessageApiStack extends SavourApiNestedStack {
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApiStack', props);
 
-    const accountSid = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAccountSid', {
+    const accountSid = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmAccountSid', {
       parameterName: '/twilio/accountSid',
       version: 1,
-    }).stringValue;
-    const authToken = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAuthToken', {
+    }).stringValue;*/
+    const authToken = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmAuthToken', {
       parameterName: '/twilio/authToken',
       version: 1,
-    }).stringValue;
-    const twilioWebhookUrl = StringParameter.fromSecureStringParameterAttributes(this, 'SsmTwilioWebhookUrl', {
+    }).stringValue;*/
+    const twilioWebhookUrl = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmTwilioWebhookUrl', {
       parameterName: '/twilio/webhook/dev', //TODO: specify dynamic stage
       version: 1,
-    }).stringValue;
+    }).stringValue;*/
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
@@ -55,9 +55,10 @@ export class MessageApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource.addResource('hooks'),
         httpMethod: HttpMethod.POST,
-        LambdaIntegrationOptions: {
+        lambdaIntegrationOptions: {
+          proxy: false,
           requestTemplates: {
-            'application/x-www-form-urlencoded':  MappingTemplate.fromFile('../../resources/mapping/twilio-request.vtl').renderTemplate()
+            'application/x-www-form-urlencoded':  MappingTemplate.fromFile('./resources/mapping/twilio-request.vtl').renderTemplate()
           },
           passthroughBehavior: PassthroughBehavior.WHEN_NO_TEMPLATES,
           integrationResponses: [
@@ -65,7 +66,7 @@ export class MessageApiStack extends SavourApiNestedStack {
               statusCode: "200",
               selectionPattern: "",
               responseTemplates: {
-                'application/xml': MappingTemplate.fromFile('../../resources/mapping/twilio-response.vtl').renderTemplate()
+                'application/xml': MappingTemplate.fromFile('./resources/mapping/twilio-response.vtl').renderTemplate()
               }
             }
           ]

@@ -11,10 +11,10 @@ export class PaymentApiStack extends SavourApiNestedStack {
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'PaymentApiStack', props);
     
-    const stripeKey = StringParameter.fromSecureStringParameterAttributes(this, 'SsmStripeKey', {
+    const stripeKey = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmStripeKey', {
       parameterName: '/stripeSecretKey/dev',
       version: 1,
-    }).stringValue;
+    }).stringValue;*/
   
     const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,

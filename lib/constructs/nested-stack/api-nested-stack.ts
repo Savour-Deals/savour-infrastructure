@@ -9,7 +9,10 @@ export enum HttpMethod {
 }
 export interface SavourApiNestedStackProps extends NestedStackProps {
   readonly restApiId: string;
-  readonly rootResourceId: string;
+	readonly rootResourceId: string;
+	readonly environment?: {	
+		[key: string]: string;
+	}
 }
 
 export class SavourApiNestedStack extends NestedStack {
