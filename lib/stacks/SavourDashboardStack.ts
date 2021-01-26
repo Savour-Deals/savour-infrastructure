@@ -1,6 +1,7 @@
 import { App, Stack, StackProps } from "@serverless-stack/resources";
 import { CfnOutput } from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import { DynamoDBTable } from "../constructs/dynamodb/dynamodb-table";
 
 interface DynamoDbTableDefinition {
   tableName: string;
@@ -15,45 +16,27 @@ const DYNAMO_TABLES: Array<DynamoDbTableDefinition> = [
 ];
 
 export default class SavourDashboardStack extends Stack {
+  app: App;
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope,id,props);
+
+    this.app = scope;
 
     this.createDynamoTables(DYNAMO_TABLES);
 
   }
 
-  createDynamoTables(tables: Array<DynamoDbTableDefinition>) : void {
+  createDynamoTables(tables: Array<DynamoDbTableDefinition>) {
 
     
     for (const table of  tables) {
       const { tableName, partitionKey } = table;
       
-      this.createTable(tableName, partitionKey);
-    }
-  }
+      new DynamoDBTable(this as any, "dev-" + tableName,"dev-" + tableName, partitionKey);
+      new DynamoDBTable(this as any, "prod-" + tableName,"prod-" + tableName, partitionKey);
 
-  createTable(tableName: string, partitionKey: string): void {
-    const app: any = this.node.root;
-    
-    try {
-      const createdTable = new dynamodb.Table(this, tableName, {
-        billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-        partitionKey: {name: partitionKey, type: dynamodb.AttributeType.STRING},
-      });
-
-      new CfnOutput(this, "TableName", {
-        value: createdTable.tableName,
-        exportName: app.logicalPrefixedName("TableName"),
-      
-      });
-
-      new CfnOutput(this, "TableArn", {
-        value: createdTable.tableArn,
-        exportName: app.logicalPrefixedName("TableArn"),
-      });
-    } catch (e) {
-      console.log(e);
-      console.log(tableName + " already exists.");
+      // this.createTable(tableName + '_dev', partitionKey);
+      // this.createTable(tableName + '_prod', partitionKey);
     }
   }
 }

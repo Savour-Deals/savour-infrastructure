@@ -10,7 +10,7 @@ export class DynamoDBTable extends Construct {
     
     const app: any = this.node.root;
 
-    const table = new Table(this, "Table", {
+    const table = new Table(this, tableName, {
       tableName: tableName,
       billingMode: BillingMode.PAY_PER_REQUEST, // Use on-demand billing mode
       partitionKey: { name: partitionKey, type: AttributeType.STRING },
