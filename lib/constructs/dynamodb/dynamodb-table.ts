@@ -33,8 +33,7 @@ export class DynamoDBTable extends Stack {
     for (const table of  tables) {
       const { tableName, partitionKey } = table;
 
-      this.createTable(`dev-${tableName}`, partitionKey);
-      this.createTable(`prod-${tableName}`, partitionKey);
+      this.createTable(`${this.scope.stage}-${tableName}`, partitionKey);
     }
   }
 
