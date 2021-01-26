@@ -32,8 +32,9 @@ export class DynamoDBTable extends Stack {
   createDynamoTables(tables: Array<DynamoDbTableDefinition>) {
     for (const table of  tables) {
       const { tableName, partitionKey } = table;
-      console.log(`${this.scope.stage}-${tableName}-TableName`);
-      this.createTable(`${this.scope.stage}-${tableName}-TableName`, partitionKey);
+
+      this.createTable(`dev-${tableName}`, partitionKey);
+      this.createTable(`prod-${tableName}`, partitionKey);
     }
   }
 
@@ -46,9 +47,9 @@ export class DynamoDBTable extends Stack {
       });
       
       // Output values
-      new CfnOutput(this, tableName, {
+      new CfnOutput(this, tableName + "-TableName", {
         value: table.tableName,
-        exportName: tableName,
+        exportName: tableName  + "-TableName",
       });
       new CfnOutput(this, tableName + "-TableArn", {
         value: table.tableArn,
