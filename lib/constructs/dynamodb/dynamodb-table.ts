@@ -52,7 +52,7 @@ export class DynamoDBTable extends Stack {
       });
       new CfnOutput(this, tableName + "-TableArn", {
         value: table.tableArn,
-        exportName: tableName,
+        exportName: tableName + "-TableArn",
       });
     } catch (e) {
       console.log(e);
