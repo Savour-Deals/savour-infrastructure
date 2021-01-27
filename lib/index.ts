@@ -1,6 +1,5 @@
 import { App } from "@serverless-stack/resources";
-import SavourDashboardStack from "./stacks/SavourDashboardStack";
-
+import { DynamoDBTable } from "./constructs/dynamodb/dynamodb-table";
 export default function main(app: App): void {
-	new SavourDashboardStack(app, "savour-dashboard");
+	new DynamoDBTable(app, `${app.stage}-dynamodb`);
 }
