@@ -15,7 +15,7 @@ const pushTableGSIs: Array<GlobalSecondaryIndexProps> = [
 ];
 const businessTableGSIs: Array<GlobalSecondaryIndexProps> = [
   {partitionKey: {name: 'btn_id', type: AttributeType.STRING}, indexName: 'btn_id-index' },
-  {partitionKey: {name: 'twilio_numbe', type: AttributeType.STRING}, indexName: 'twilio_number-index' },
+  {partitionKey: {name: 'twilio_number', type: AttributeType.STRING}, indexName: 'twilio_number-index' },
 
 ];
 const DYNAMO_TABLES: Array<DynamoDbTableDefinition> = [
