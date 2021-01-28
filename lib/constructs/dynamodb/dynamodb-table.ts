@@ -32,9 +32,6 @@ export class DynamoDBTable extends Stack {
 	constructor(scope: App, id: string) {
     super(scope, id);
     this.scope = scope;
-    console.log(scope.stageName);
-    console.log(scope.stage);
-    console.log(scope.region);
     this.createDynamoTables(DYNAMO_TABLES);
   }
 
