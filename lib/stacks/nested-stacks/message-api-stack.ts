@@ -12,18 +12,20 @@ export class MessageApiStack extends SavourApiNestedStack {
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApiStack', props);
 
-    const accountSid = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmAccountSid', {
+    const stage = scope.node.tryGetContext('stage');
+
+    const accountSid = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAccountSid', {
       parameterName: '/twilio/accountSid',
       version: 1,
-    }).stringValue;*/
-    const authToken = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmAuthToken', {
+    }).stringValue;
+    const authToken = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAuthToken', {
       parameterName: '/twilio/authToken',
       version: 1,
-    }).stringValue;*/
-    const twilioWebhookUrl = "temp";/*StringParameter.fromSecureStringParameterAttributes(this, 'SsmTwilioWebhookUrl', {
-      parameterName: '/twilio/webhook/dev', //TODO: specify dynamic stage
+    }).stringValue;
+    const twilioWebhookUrl = StringParameter.fromSecureStringParameterAttributes(this, 'SsmTwilioWebhookUrl', {
+      parameterName: `/twilio/webhook/${stage}`, 
       version: 1,
-    }).stringValue;*/
+    }).stringValue;
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
