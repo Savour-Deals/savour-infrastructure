@@ -1,29 +1,37 @@
-import { Construct, CfnOutput } from "@aws-cdk/core";
-import { Table, TableProps, BillingMode, AttributeType } from "@aws-cdk/aws-dynamodb";
-import { App } from "@serverless-stack/resources";
+import { CfnOutput, Construct } from "@aws-cdk/core";
+import { Table, BillingMode, AttributeType, GlobalSecondaryIndexProps } from "@aws-cdk/aws-dynamodb";
 
-export type DynamoDBTableProps = TableProps
+export interface DynamoDbTableProps {
+  tableName: string,
+  partitionKey: string,
+  globalSecondaryIndexes?: Array<GlobalSecondaryIndexProps>,
+}
 
 export class DynamoDBTable extends Construct {
-	constructor(scope: App, id: string, tableName: string, partitionKey: string, props?: DynamoDBTableProps) {
+	constructor(scope: Construct, id: string, props: DynamoDbTableProps) {
     super(scope, id);
-    
-    const app: any = this.node.root;
 
-    const table = new Table(this, "Table", {
+    const tableName = `${scope.node.tryGetContext('stage')}-${props.tableName}`;
+
+    const table = new Table(this, tableName, {
       tableName: tableName,
       billingMode: BillingMode.PAY_PER_REQUEST, // Use on-demand billing mode
-      partitionKey: { name: partitionKey, type: AttributeType.STRING },
+      partitionKey: { name: props.partitionKey, type: AttributeType.STRING },
     });
-    
+
+    // TODO: add GSI if exists
+    if (props.globalSecondaryIndexes) {
+      for (const globalSecondaryIndex of props.globalSecondaryIndexes) table.addGlobalSecondaryIndex(globalSecondaryIndex);
+    }
+
     // Output values
-    new CfnOutput(this, "TableName", {
+    new CfnOutput(this, tableName + "-TableName", {
       value: table.tableName,
-      exportName: app.logicalPrefixedName("TableName"),
+      exportName: tableName  + "-TableName",
     });
-    new CfnOutput(this, "TableArn", {
+    new CfnOutput(this, tableName + "-TableArn", {
       value: table.tableArn,
-      exportName: app.logicalPrefixedName("TableArn"),
+      exportName: tableName + "-TableArn",
     });
   }
 }

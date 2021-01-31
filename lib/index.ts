@@ -1,8 +1,8 @@
 import { App } from "@serverless-stack/resources";
 import LambdaApiStack from "./stacks/lambda-api-stack";
-import SavourDashboardStack from "./stacks/savour-dashboard-stack";
+import DynamoDbStack from "./stacks/dynamodb-stack";
 
 export default function main(app: App): void {
-	new SavourDashboardStack(app, "savour-dashboard");
-	new LambdaApiStack(app, "savour-lambda-api");
+	new DynamoDbStack(app, `${app.stage}-savour-dynamodb`);
+	new LambdaApiStack(app, '${app.stage}-savour-lambda-api');
 }
