@@ -9,6 +9,7 @@ import { App, Stack } from "@serverless-stack/resources";
 import { BusinessUserApiStack } from "./nested-stacks/business-user-api-stack";
 import { Deployment, Stage, RestApi, Cors } from "@aws-cdk/aws-apigateway"
 import { SavourApiNestedStack } from '../constructs/nested-stack/api-nested-stack';
+import * as ssm from '@aws-cdk/aws-ssm';
 
 export default class LambdaApiStack extends Stack {
   
@@ -18,7 +19,7 @@ export default class LambdaApiStack extends Stack {
     this.node.setContext('stage', `${scope.stage}`);
     
     // Define an API Gateway REST API for lambda.
-    const restApi = new RestApi(this, 'rest-api-stack', {
+    const restApi = new RestApi(this, `${scope.stage}-savour-rest-api`, {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
         allowMethods: Cors.ALL_METHODS // this is also the default
@@ -65,6 +66,16 @@ export default class LambdaApiStack extends Stack {
     stacks.forEach((stack) => {
       stack.apiLambdas.forEach((api) => deployment.node.addDependency(api.method))
     });
-    new Stage(this, 'Stage', { deployment });
+    new Stage(this, 'Stage', { deployment, stageName: `${scope.stage}` });
+
+    const executeUrl = `https://${restApi.restApiId}.execute-api.${this.region}.amazonaws.com/${scope.stage}`;
+
+    //export this api execution url
+    new ssm.StringParameter(this, 'ApiExecuteUrl', {
+      description: `API Execute URL for ${scope.stage}`,
+      parameterName: `/api/execute-url/${scope.stage}`,
+      stringValue: executeUrl,
+      tier: ssm.ParameterTier.STANDARD
+    });
   }
 }

@@ -12,11 +12,8 @@ export class MessageApiStack extends SavourApiNestedStack {
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApi', props);
 
-    const stage = scope.node.tryGetContext('stage');
-
     const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', '/twilio/accountSid');
     const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', '/twilio/authToken');
-    const twilioWebhookUrl = StringValue.fromSecureStringParameter(this, 'TwilioWebhook', `/twilio/webhook/${stage}`);
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
@@ -73,7 +70,7 @@ export class MessageApiStack extends SavourApiNestedStack {
       environment: {
         accountSid: accountSid,
         authToken: authToken,
-        twilioWebhookUrl: twilioWebhookUrl,
+        path: '/message/hooks'
       },
       restApi: {
         resource: apiResource.addResource('number'),

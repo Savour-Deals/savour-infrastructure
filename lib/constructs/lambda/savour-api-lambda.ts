@@ -47,7 +47,7 @@ export class SavourApiLambda extends Construct {
 			runtime: Runtime.NODEJS_10_X,
 			code: Code.fromAsset("./savour-api-lib"),
 			handler: `src/index.${props.api}.${props.operation}`,
-			environment: {...commonEnv, ...props.environment}
+			environment: {...commonEnv, ...props.environment},
 		});
 		
 		const methodResponses: MethodResponse[] = [];
