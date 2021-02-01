@@ -16,7 +16,7 @@ export class MessageApiStack extends SavourApiNestedStack {
 
     const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', '/twilio/accountSid');
     const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', '/twilio/authToken');
-    const twilioWebhookUrl = StringValue.fromSecureStringParameter(this, 'TwilioWebhood', `/twilio/webhook/${stage}`);
+    const twilioWebhookUrl = StringValue.fromSecureStringParameter(this, 'TwilioWebhook', `/twilio/webhook/${stage}`);
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
