@@ -7,7 +7,7 @@ export class PushApiStack extends SavourApiNestedStack {
   readonly name = "push";
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
-    super(scope, 'PushApiStack', props);
+    super(scope, 'PushApi', props);
 
     const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,

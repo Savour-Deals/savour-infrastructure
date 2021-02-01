@@ -13,7 +13,7 @@ export class DynamoDBTable extends Construct {
 
     const tableName = `${scope.node.tryGetContext('stage')}-${props.tableName}`;
 
-    const table = new Table(this, tableName, {
+    const table = new Table(this, `${tableName}-ddb-table`, {
       tableName: tableName,
       billingMode: BillingMode.PAY_PER_REQUEST, // Use on-demand billing mode
       partitionKey: { name: props.partitionKey, type: AttributeType.STRING },

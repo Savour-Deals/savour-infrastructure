@@ -1,6 +1,6 @@
 import { Construct, Fn } from "@aws-cdk/core";
 import { Function, Code, Runtime } from "@aws-cdk/aws-lambda";
-import { LambdaIntegration, MethodResponse, LambdaIntegrationOptions, AuthorizationType, Resource, Method, MethodOptions } from "@aws-cdk/aws-apigateway"
+import { LambdaIntegration, MethodResponse, LambdaIntegrationOptions, AuthorizationType, Resource, Method } from "@aws-cdk/aws-apigateway"
 
 export interface SavourApiLambdaProps {
 	// Any props to pass to this generic lambda API should be added here
@@ -24,13 +24,14 @@ export class SavourApiLambda extends Construct {
 		super(scope, `${props.api}-${props.operation}`);
 
 		const stage = scope.node.tryGetContext('stage');
-		const ddbTables = {
+		const commonEnv = {
 			businessTable: Fn.importValue(`${stage}-Business-TableName`),
 			businessUserTable: Fn.importValue(`${stage}-BusinessUser-TableName`),
 			subscriberUserTable: Fn.importValue(`${stage}-SubscriberUser-TableName`),
 			pushMessageTable: Fn.importValue(`${stage}-PushMessage-TableName`),
 			// unclaimedButtonTable: Fn.importValue('dev-UnclaimedButton-TableName),
-			redirectTable: Fn.importValue(`${stage}-Redirect-TableName`)
+			redirectTable: Fn.importValue(`${stage}-Redirect-TableName`),
+			stage: stage,
 		};
 
 		const restApi = props.restApi;
@@ -46,7 +47,7 @@ export class SavourApiLambda extends Construct {
 			runtime: Runtime.NODEJS_10_X,
 			code: Code.fromAsset("./savour-api-lib"),
 			handler: `src/index.${props.api}.${props.operation}`,
-			environment: {...ddbTables, ...props.environment}
+			environment: {...commonEnv, ...props.environment}
 		});
 		
 		const methodResponses: MethodResponse[] = [];

@@ -3,20 +3,16 @@ import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
 import { RestApi } from "@aws-cdk/aws-apigateway";
-import { StringParameter }from '@aws-cdk/aws-ssm';
+import { StringValue } from '../../constructs/ssm/string-value';
 
 export class PaymentApiStack extends SavourApiNestedStack {
   readonly name = "payment";
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
-    super(scope, 'PaymentApiStack', props);
+    super(scope, 'PaymentApi', props);
 
     const stage = scope.node.tryGetContext('stage');
-    
-    const stripeKey = StringParameter.fromSecureStringParameterAttributes(this, 'SsmStripeKey', {
-      parameterName: `/stripe/SecretKey/${stage}`,
-      version: 1,
-    }).stringValue;
+    const stripeKey = StringValue.fromSecureStringParameter(this, 'StripeSecretKey', `/stripe/secretKey/${stage}`);
   
     const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,

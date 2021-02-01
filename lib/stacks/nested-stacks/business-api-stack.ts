@@ -7,7 +7,7 @@ export class BusinessApiStack extends SavourApiNestedStack {
   readonly name = "business";
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
-    super(scope, 'BusinessApiStack', props);
+    super(scope, 'BusinessApi', props);
 
     const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,

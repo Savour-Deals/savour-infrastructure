@@ -4,7 +4,7 @@ import { PushApiStack } from './nested-stacks/push-api-stack';
 import { PaymentApiStack } from './nested-stacks/payment-api-stack';
 import { MessageApiStack } from './nested-stacks/message-api-stack';
 import { BusinessApiStack } from './nested-stacks/business-api-stack';
-import { StackProps, Fn } from "@aws-cdk/core";
+import { StackProps } from "@aws-cdk/core";
 import { App, Stack } from "@serverless-stack/resources";
 import { BusinessUserApiStack } from "./nested-stacks/business-user-api-stack";
 import { Deployment, Stage, RestApi, Cors } from "@aws-cdk/aws-apigateway"
@@ -14,17 +14,17 @@ export default class LambdaApiStack extends Stack {
   
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
+
+    this.node.setContext('stage', `${scope.stage}`);
     
     // Define an API Gateway REST API for lambda.
-    const restApi = new RestApi(this, 'RestApi', {
+    const restApi = new RestApi(this, 'rest-api-stack', {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
         allowMethods: Cors.ALL_METHODS // this is also the default
       },
       deploy: false,
     });
-
-    this.node.setContext('stage', `${scope.stage}`);
 
     const stacks: SavourApiNestedStack[] = [
       new BusinessApiStack(this, {

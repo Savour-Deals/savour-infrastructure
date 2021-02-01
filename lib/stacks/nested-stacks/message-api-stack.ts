@@ -1,31 +1,22 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior, AuthorizationType } from "@aws-cdk/aws-apigateway"
-import { StringParameter }from '@aws-cdk/aws-ssm';
+import { RestApi, PassthroughBehavior } from "@aws-cdk/aws-apigateway"
 import { Constants } from "../../constants/constants";
 import { MappingTemplate } from '@aws-cdk/aws-appsync';
+import { StringValue } from "../../constructs/ssm/string-value"
 
 export class MessageApiStack extends SavourApiNestedStack {
   readonly name = "message";
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
-    super(scope, 'MessageApiStack', props);
+    super(scope, 'MessageApi', props);
 
     const stage = scope.node.tryGetContext('stage');
 
-    const accountSid = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAccountSid', {
-      parameterName: '/twilio/accountSid',
-      version: 1,
-    }).stringValue;
-    const authToken = StringParameter.fromSecureStringParameterAttributes(this, 'SsmAuthToken', {
-      parameterName: '/twilio/authToken',
-      version: 1,
-    }).stringValue;
-    const twilioWebhookUrl = StringParameter.fromSecureStringParameterAttributes(this, 'SsmTwilioWebhookUrl', {
-      parameterName: `/twilio/webhook/${stage}`, 
-      version: 1,
-    }).stringValue;
+    const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', '/twilio/accountSid');
+    const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', '/twilio/authToken');
+    const twilioWebhookUrl = StringValue.fromSecureStringParameter(this, 'TwilioWebhood', `/twilio/webhook/${stage}`);
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,

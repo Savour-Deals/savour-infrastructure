@@ -1,13 +1,13 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior, AuthorizationType } from "@aws-cdk/aws-apigateway";
+import { RestApi, PassthroughBehavior } from "@aws-cdk/aws-apigateway";
 
 export class UrlApiStack extends SavourApiNestedStack {
   readonly name = "url";
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
-    super(scope, 'UrlApiStack', props);
+    super(scope, 'UrlApi', props);
 
     const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
