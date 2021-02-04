@@ -13,7 +13,7 @@ export class LambdaApiGateway extends Construct {
     super(scope, id);
 		
 		for (const functionName of props.functionNames) {
-			const handler = new Function(this, "", {
+			new Function(this, "", {
 				runtime: Runtime.NODEJS_10_X,
 				code: Code.fromAsset("./savour-api-lib"),
 				handler: `${id}/${functionName}.main`

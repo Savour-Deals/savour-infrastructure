@@ -1,5 +1,9 @@
 import { App } from "@serverless-stack/resources";
-import { DynamoDBTable } from "./constructs/dynamodb/dynamodb-table";
+import LambdaApiStack from "./stacks/lambda-api-stack";
+import DynamoDbStack from "./stacks/dynamodb-stack";
+
 export default function main(app: App): void {
-	new DynamoDBTable(app, `${app.stage}-dynamodb`);
+	// Stack id will be prepended with <stage>-savour-infrastructure
+	new DynamoDbStack(app, `dynamodb`);
+	new LambdaApiStack(app, `lambda-api`);
 }
