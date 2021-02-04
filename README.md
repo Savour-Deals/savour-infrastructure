@@ -1,4 +1,4 @@
-# Getting Started with Serverless Stack Toolkit
+# Getting Started with Serverless Stack Toolkit Test
 
 This project was bootstrapped with [Create Serverless Stack](https://github.com/serverless-stack/serverless-stack/tree/master/packages/create-serverless-stack).
 
