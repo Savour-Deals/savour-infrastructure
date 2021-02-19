@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior } from "@aws-cdk/aws-apigateway"
+import { RestApi, PassthroughBehavior, Cors } from "@aws-cdk/aws-apigateway"
 import { Constants } from "../../constants/constants";
 import { MappingTemplate } from '@aws-cdk/aws-appsync';
 import { StringValue } from "../../constructs/ssm/string-value"
@@ -20,7 +20,14 @@ export class MessageApiStack extends SavourApiNestedStack {
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("message");
+    const apiResource = api.root.addResource("message", {       
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
+    });
 
     //TODO: Remove button API completely
     // this.apiLambdas.push(new SavourApiLambda(this, {

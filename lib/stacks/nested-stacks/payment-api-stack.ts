@@ -2,7 +2,7 @@ import { Constants } from './../../constants/constants';
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi } from "@aws-cdk/aws-apigateway";
+import { Cors, RestApi } from "@aws-cdk/aws-apigateway";
 import { StringValue } from '../../constructs/ssm/string-value';
 
 export class PaymentApiStack extends SavourApiNestedStack {
@@ -19,8 +19,22 @@ export class PaymentApiStack extends SavourApiNestedStack {
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("payment");
-    const subscriptionResource = apiResource.addResource("subscription");
+    const apiResource = api.root.addResource("payment", {
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      },
+    });
+    const subscriptionResource = apiResource.addResource("subscription", {
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      },
+    });
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
@@ -37,7 +51,7 @@ export class PaymentApiStack extends SavourApiNestedStack {
 
     new SavourApiLambda(this, {
       api: this.name,
-      operation: "create",
+      operation: "createCustomer",
       environment: {
         stripeKey: stripeKey,
         recurringPlanID: Constants.STRIPE.RECURRING_PLAN_ID,
