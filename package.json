@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "test": "sst test",
-    "build": "sst build",
+    "build-lambda-lib": "cd savour-api-lib && npm run build && cd ../",
+    "build": "npm run build-lambda-lib && sst build",
+    "build-and-deploy-prod": "npm run build-lambda-lib && sst deploy --stage prod",
+    "build-and-deploy-dev": "npm run build-lambda-lib && sst deploy --stage dev",
     "deploy": "sst deploy",
     "remove": "sst remove"
   },
@@ -14,7 +17,8 @@
     "@aws-cdk/core": "1.61.0",
     "@aws-cdk/aws-apigateway": "1.61.0",
     "@aws-cdk/aws-appsync": "1.61.0",
-    "@aws-cdk/aws-ssm": "1.61.0"
+    "@aws-cdk/aws-ssm": "1.61.0",
+    "@aws-cdk/aws-iam": "1.61.0"
   },
   "dependencies": {
     "@serverless-stack/cli": "0.4.3",

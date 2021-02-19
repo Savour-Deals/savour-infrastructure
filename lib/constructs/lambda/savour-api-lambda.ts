@@ -1,5 +1,6 @@
 import { Construct, Fn } from "@aws-cdk/core";
 import { Function, Code, Runtime } from "@aws-cdk/aws-lambda";
+import { PolicyStatement } from "@aws-cdk/aws-iam";
 import { LambdaIntegration, MethodResponse, LambdaIntegrationOptions, AuthorizationType, Resource, Method } from "@aws-cdk/aws-apigateway"
 
 export interface SavourApiLambdaProps {
@@ -45,31 +46,54 @@ export class SavourApiLambda extends Construct {
 		// Define function
 		const handler = new Function(this, `${props.api}-${props.operation}`, {
 			runtime: Runtime.NODEJS_10_X,
-			code: Code.fromAsset("./savour-api-lib"),
-			handler: `src/index.${props.api}.${props.operation}`,
+			code: Code.fromAsset(`./savour-api-lib/dist/${props.api}-${props.operation}.zip`),
+			handler: `src/${props.api}/${props.operation}.default`,
 			environment: {...commonEnv, ...props.environment},
 		});
+
+		handler.addToRolePolicy(new PolicyStatement({
+      resources: ['*'],
+      actions: ['dynamodb:*'],
+    }));
 		
 		const methodResponses: MethodResponse[] = [];
-		if (restApi.lambdaIntegrationOptions?.integrationResponses) {
-			restApi.lambdaIntegrationOptions.integrationResponses.forEach((r) => {
-				const keys = Object.keys(r.responseParameters || {});
-				const params: {[destination: string]: boolean} = {}
+		let integrationOptions = restApi.lambdaIntegrationOptions;
+		if (integrationOptions) {
+			if (integrationOptions.integrationResponses) {
+				//if integration options and responses are set, we want a custom integration. Below is to reduce the
+				//setup code by setting response variables
+				integrationOptions.integrationResponses.forEach((r) => {
+					const keys = Object.keys(r.responseParameters || {});
+					const params: {[destination: string]: boolean} = {}
 
-				keys.forEach((k) => {
-					params[k] = true;
-				});
+					keys.forEach((k) => {
+						params[k] = true;
+					});
 
-				methodResponses.push({
-					statusCode: r.statusCode,
-					responseParameters: !keys.length? undefined : params
+					methodResponses.push({
+						statusCode: r.statusCode,
+						responseParameters: !keys.length? undefined : params
+					});
 				});
+			}
+		} else {
+			//if integration options are not set, we should proxy
+			//this also will allow cors headers to pass back to client
+			integrationOptions = { proxy: true };
+			methodResponses.push({
+				statusCode: '200',
+				responseParameters: {
+					'method.response.header.Access-Control-Allow-Headers': true,
+					'method.response.header.Access-Control-Allow-Methods': true,
+					'method.response.header.Access-Control-Allow-Origin': true,
+					'method.response.header.Access-Control-Allow-Credentials': true					
+				}
 			});
 		}
 		
-		this.method = apiResource.addMethod(restApi.httpMethod, new LambdaIntegration(handler, restApi.lambdaIntegrationOptions), {
+		this.method = apiResource.addMethod(restApi.httpMethod, new LambdaIntegration(handler, integrationOptions), {
 				authorizationType: AuthorizationType.IAM,
-				methodResponses: !methodResponses.length? undefined : methodResponses
+				methodResponses: methodResponses,
 			}
 		);
   }
