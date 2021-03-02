@@ -29,23 +29,6 @@ export class MessageApiStack extends SavourApiNestedStack {
       }
     });
 
-    //TODO: Remove button API completely
-    // this.apiLambdas.push(new SavourApiLambda(this, {
-    //   api: this.name,
-    //   operation: "button",
-    //   environment: {
-    //     uuidSize: Constants.UUID_SIZE,
-    //     accountSid: accountSid,
-    //     authToken: authToken,
-    //     longUrlDomain: Constants.LONG_URL_DOMAIN,
-    //     shortUrlDomain: Constants.SHORT_URL_DOMAIN,
-    //   },
-    //   restApi: {
-    //     resource: apiResource.addResource('button'),
-    //     httpMethod: HttpMethod.POST,
-    //   }
-    // }));
-
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "hooks",
