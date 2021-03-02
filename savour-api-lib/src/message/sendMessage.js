@@ -9,6 +9,7 @@ export default async function main(event, context) {
   const message = data.message;
   const link = data.link;
   const businessId = data.businessId;
+	const messageId = uuidv4();
 
 	var promises = [getBusiness(businessId)];
 	if (link) {
@@ -31,11 +32,11 @@ export default async function main(event, context) {
     } else {
       throw new Error("Cound not find buiness to send message.");
     }
-	}).then((results) => {
-		return success({
-			resultIds: results.map((result) => messageAudit(result))
-		});
-	}).catch((e) => {
+	})
+	.then((results) =>  messageAudit(messageId, results.map((r) => r.toJSON())))
+	.then((result) => success({
+		messageId: result
+	})).catch((e) => {
 		console.log(e);
 		return failure({ 
 			status: false,
@@ -68,22 +69,21 @@ async function sendMessage(businessNumber, subscriberNumber, message, shortLink)
 }
 
 
-async function messageAudit(result){
-	const uuid = uuidv4();
+async function messageAudit(messageId, results){
 	const params = {
 		TableName: process.env.pushMessageTable,
 		Item: {
-			unique_id: uuid,
+			unique_id: messageId,
 			send_date_time: new Date().toISOString(),
-			twilio_esponse: result.toJson(),
+			twilio_esponse: results,
 		},
 		ConditionExpression: 'attribute_not_exists(unique_id)'
 	};
 	return dynamoDbLib.call("put", params)
-	.then(() => uuid)
+	.then(() => messageId)
 	.catch((e) => {
 		console.log(e);
 		//eat this error, the message already sent. This is just not idea for data post processing
-		return uuid
+		return messageId;
 	});
 }
