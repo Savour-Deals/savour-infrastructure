@@ -1,0 +1,8 @@
+{
+  "body": "{\"uid\":\"123456\",\"email\":\"test@test.com\",\"first_name\":\"Jon\",\"last_name\":\"Doe\",\"mobile_number\":\"+16124812069\",\"businesses\":\"[123456]\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

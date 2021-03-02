@@ -1,0 +1,11 @@
+{
+  "body": "{\"customer_id\":\"cus_GnPsTxuh0IZ91J\",\"payment_method\":\"card_1GFr2IFdZgF3d0XelZRONZJv\"}",
+  "pathParameters": {
+    "place_id": "123456"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

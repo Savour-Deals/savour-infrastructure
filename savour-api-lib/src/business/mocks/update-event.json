@@ -1,0 +1,11 @@
+{
+  "body": "{\"double_click_deal\":\"Double Click Deal 1\",\"long_click_deal\":\"Long Click Deal 1\",\"onboard_deal\":\"Onboard Deal 1\",\"single_click_deal\":\"Single Click Deal 1\"}",
+  "pathParameters": {
+    "place_id": "123456"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

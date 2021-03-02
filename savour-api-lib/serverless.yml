@@ -1,0 +1,123 @@
+
+service: savour-api-lib
+
+
+frameworkVersion: '2'
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+package:
+  individually: true
+
+functions:
+  ######################################################
+  #####                                            #####
+  #####          businesses table API              #####
+  #####                                            #####
+  ######################################################
+  business-create:
+    handler: src/business/create.default
+
+  business-get:
+    handler: src/business/get.default
+
+  business-update:
+    handler: src/business/update.default
+
+  business-delete:
+    handler: src/business/delete.default
+
+  ######################################################
+  #####                                            #####
+  #####          business users table API          #####
+  #####                                            #####
+  ######################################################
+  businessUser-create:
+    handler: src/businessUser/create.default
+
+  businessUser-get:
+    handler: src/businessUser/get.default
+
+  businessUser-update:
+    handler: src/businessUser/update.default
+
+  businessUser-delete:
+    handler: src/businessUser/delete.default
+
+  ######################################################
+  #####                                            #####
+  #####          subscriber users table API        #####
+  #####                                            #####
+  ######################################################
+  subscriber-create:
+    handler: src/subscriber/create.default
+
+  subscriber-get:
+    handler: src/subscriber/get.default
+
+  subscriber-update:
+    handler: src/subscriber/update.default
+
+  subscriber-delete:
+    handler: src/subscriber/delete.default
+
+  ######################################################
+  #####                                            #####
+  #####              push table API                #####
+  #####                                            #####
+  ######################################################
+  push-create:
+    handler: src/push/create.default
+
+  push-get:
+    handler: src/push/get.default
+
+  push-getAll:
+    handler: src/push/getAll.default
+
+  push-delete:
+    handler: src/push/delete.default
+
+  ######################################################
+  #####                                            #####
+  #####       message service API                  #####
+  #####                                            #####
+  ######################################################
+  message-hooks:
+    handler: src/message/hooks.default
+
+  message-sendMessage:
+    handler: src/message/sendMessage.default
+
+  message-createNumber:
+    handler: src/message/createNumber.default
+
+
+  ######################################################
+  #####                                            #####
+  #####       Payment Service API                  #####
+  #####                                            #####
+  ######################################################
+  payment-createCustomer:
+    handler: src/payment/createCustomer.default
+
+  payment-updateCard:
+    handler: src/payment/updateCard.default
+
+  payment-updateUsage:
+    handler: src/payment/updateUsage.default
+
+  payment-cancelSubscription:
+    handler: src/payment/cancelSubscription.default
+
+  ######################################################
+  #####                                            #####
+  #####       url shortner Service API             #####
+  #####                                            #####
+  ######################################################
+  url-redirect:
+    handler: src/url/redirect.default
