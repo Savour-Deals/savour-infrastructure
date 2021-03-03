@@ -8,6 +8,8 @@ function randomString(length) {
 }
 
 export default async function main(longUrl, shortUrlDomain) {
+	if (!longUrl) return;
+	
 	var token = '';
 	var shortUrl = '';
 	var attempt = 0;
