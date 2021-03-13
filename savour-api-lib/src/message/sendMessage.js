@@ -34,7 +34,7 @@ export default async function main(event) {
       throw new Error("Cound not find buiness to send message.");
     }
 	})
-	.then((results) =>  messageAudit(messageId, results.map((r) => r.toJSON())))
+	.then((results) =>  messageAudit(messageId, businessId, results.map((r) => r.toJSON())))
 	.then((result) => success({
 		messageId: result
 	})).catch((e) => {
@@ -70,11 +70,12 @@ async function sendMessage(businessNumber, subscriberNumber, message, shortLink)
 }
 
 
-async function messageAudit(messageId, results){
+async function messageAudit(messageId, businessId, results){
 	const params = {
 		TableName: process.env.pushMessageTable,
 		Item: {
 			unique_id: messageId,
+			business_id: businessId,
 			send_date_time: new Date().toISOString(),
 			twilio_response: results,
 		},
