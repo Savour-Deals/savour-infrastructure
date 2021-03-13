@@ -37,8 +37,8 @@ export default async function main(event, context) {
 		} catch (e) {
 			return failure({ status: false });
 		}
-	}else {
-		console.log(e);
+	} else {
+		console.log("Update entry was empty");
 		//nothing to update. return false
 		return success({ status: false });
 	}

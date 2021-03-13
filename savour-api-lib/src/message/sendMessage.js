@@ -1,4 +1,5 @@
 const client = require('twilio')(process.env.accountSid, process.env.authToken);
+import * as dynamoDb from "../common/dynamodb-lib";
 import shorten from '../url/shorten';
 import { success, failure } from "../common/response-lib";
 import { v4 as uuidv4 } from 'uuid';
@@ -79,7 +80,7 @@ async function messageAudit(messageId, results){
 		},
 		ConditionExpression: 'attribute_not_exists(unique_id)'
 	};
-	return dynamoDbLib.call("put", params)
+	return dynamoDb.call("put", params)
 	.then(() => messageId)
 	.catch((e) => {
 		console.log(e);

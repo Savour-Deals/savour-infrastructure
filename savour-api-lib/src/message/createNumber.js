@@ -16,7 +16,7 @@ export default async function main(event, context) {
 	if (stage == 'dev') {
 		number = '+123456789';
 	} else {
-		const url = await ssm.getParameter(`/api/execute-url/${scope.stage}`).promise();
+		const url = await ssm.getParameter(`/api/execute-url/${stage}`).promise();
 		number = await client.availablePhoneNumbers('US').local
 			.list({
 				// nearLatLong: '37.840699, -122.461853',

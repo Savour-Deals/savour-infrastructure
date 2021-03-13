@@ -21,7 +21,7 @@ export default async function main(event, context) {
     respBody = "Sorry, we don't recognize that command. Text SUB to subscribe and STOP to unsubscribe.";
   }
   console.log(`Response: ${respBody}`);
-  resp = `<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>${respBody}</Message></Response>`;
+  resp = `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${respBody}</Message></Response>`;
   return resp;
 }
 
