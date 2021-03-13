@@ -13,9 +13,9 @@ provider:
 package:
   individually: true
 
-# custom:
-#   bundle:
-#     linting: false # Enable linting as a part of the build process
+custom:
+  bundle:
+    linting: false # We do linting seperate from bundling
 
 functions:
   ######################################################

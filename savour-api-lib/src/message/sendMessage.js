@@ -4,7 +4,7 @@ import shorten from '../url/shorten';
 import { success, failure } from "../common/response-lib";
 import { v4 as uuidv4 } from 'uuid';
 
-export default async function main(event, context) {
+export default async function main(event) {
 	console.log(event);
 	const data = JSON.parse(event.body);
   const message = data.message;
@@ -12,7 +12,7 @@ export default async function main(event, context) {
   const businessId = data.businessId;
 	const messageId = uuidv4();
 
-	var promises = [getBusiness(businessId)];
+	const promises = [getBusiness(businessId)];
 	if (link) {
 		promises.push(shorten(link, process.env.shortUrlDomain));
 	}
@@ -60,7 +60,7 @@ async function getBusiness(businessId) {
 }
 
 async function sendMessage(businessNumber, subscriberNumber, message, shortLink) {
-	let messageBody = `${message} ${shortLink ? `${shortLink} ` : ""}HELP 4 help, STOP 2 Unsub.`;
+	const messageBody = `${message} ${shortLink ? `${shortLink} ` : ""}HELP 4 help, STOP 2 Unsub.`;
 
 	return client.messages.create({
 		body: messageBody,
@@ -76,7 +76,7 @@ async function messageAudit(messageId, results){
 		Item: {
 			unique_id: messageId,
 			send_date_time: new Date().toISOString(),
-			twilio_esponse: results,
+			twilio_response: results,
 		},
 		ConditionExpression: 'attribute_not_exists(unique_id)'
 	};

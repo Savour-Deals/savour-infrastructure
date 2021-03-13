@@ -5,29 +5,37 @@ module.exports = {
     node: true,
     jest: true
   },
+  plugins: ["@typescript-eslint"],
+  parser: "babel-eslint",
   extends: [
-    'eslint:recommended'
+    "eslint:recommended"
   ],
   rules: {
     //js
     "no-console": "off",
-    "camelcase": "warn",
+    "camelcase": "off",
   },
   overrides: [
     //ts
     {
+      plugins: ["@typescript-eslint"],
+
       files: ["*.ts"],
       parser: "@typescript-eslint/parser",
       parserOptions: {
         'project': './tsconfig.json'
       },
-      plugins: ["@typescript-eslint"],
+      extends: [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+      ],
       /**
        * Typescript Rules
        * https://github.com/bradzacher/eslint-plugin-typescript
        */
       rules: {
-        '@typescript-eslint/camelcase': "off"
+        "camelcase": "off",
+        "@typescript-eslint/camelcase": "off" //not supported? Will throw error if set to anything else
       }
     }
   ] 

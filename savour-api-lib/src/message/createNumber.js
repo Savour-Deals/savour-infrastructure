@@ -4,7 +4,7 @@ const client = require('twilio')(process.env.accountSid, process.env.authToken);
 import SSM from "aws-sdk/clients/ssm";
 const ssm = new SSM();
 
-export default async function main(event, context) {
+export default async function main(event) {
 	//query for phone number in US
   const data = JSON.parse(event.body);
 	console.log(data);
@@ -12,7 +12,7 @@ export default async function main(event, context) {
 	const placeId = data.place_id;
 	const stage = process.env.stage;
 
-	var number;
+	let number;
 	if (stage == 'dev') {
 		number = '+123456789';
 	} else {
@@ -27,7 +27,7 @@ export default async function main(event, context) {
 				limit: 1
 			})
 			.then(local => {
-				var resource = local[0];
+				const resource = local[0];
 
 				const webhook = url + process.env.path;
 				//provision phone number

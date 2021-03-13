@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "serverless package --package 'dist'",
-    "test": "serverless-bundle test"
+    "lint": "eslint --ext .js,.ts src"
   },
   "author": "",
   "license": "UNLICENSED",
@@ -15,9 +15,12 @@
     "url": "https://github.com/AnomalyInnovations/serverless-nodejs-starter.git"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.17.0",
+    "@typescript-eslint/parser": "^4.17.0",
     "aws-sdk": "^2.681.0",
-    "serverless-bundle": "^3.2.0",
-    "serverless": "^2.25.2"
+    "serverless": "^2.29.0",
+    "serverless-bundle": "^4.2.2",
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "stripe": "^8.138.0",

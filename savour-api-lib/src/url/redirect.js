@@ -1,6 +1,6 @@
 import * as dynamoDb from "../common/dynamodb-lib";
 
-export default async function main(event, context) {
+export default async function main(event) {
 	const params = {
     TableName: process.env.redirectTable,
     // 'Key' defines the partition key and sort key of the item to be retrieved
