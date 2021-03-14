@@ -3,17 +3,17 @@ import { App, Stack, StackProps } from "@serverless-stack/resources";
 import { DynamoDBTable, DynamoDbTableProps } from "../constructs/dynamodb/dynamodb-table";
 
 const pushTableGSIs: Array<GlobalSecondaryIndexProps> = [
-  {partitionKey: {name: 'business_id', type: AttributeType.STRING}, indexName: 'v-index' },
+  {partitionKey: {name: 'businessId', type: AttributeType.STRING}, indexName: 'businessId-index' },
 ];
 const businessTableGSIs: Array<GlobalSecondaryIndexProps> = [
-  {partitionKey: {name: 'twilio_number', type: AttributeType.STRING}, indexName: 'twilio_number-index' },
+  {partitionKey: {name: 'messagingNumber', type: AttributeType.STRING}, indexName: 'messagingNumber-index' },
 ];
 const DYNAMO_TABLES: Array<DynamoDbTableProps> = [
-  { tableName: 'BusinessUser', partitionKey: 'uid' },
-  { tableName: 'Business', partitionKey: 'place_id', globalSecondaryIndexes: businessTableGSIs },
-  { tableName: 'Redirect', partitionKey: 'unique_id' },
-  { tableName: 'SubscriberUser', partitionKey: 'mobile_number' },
-  { tableName: 'PushMessage', partitionKey: 'uid', globalSecondaryIndexes: pushTableGSIs},
+  { tableName: 'BusinessUser', partitionKey: 'id' },
+  { tableName: 'Business', partitionKey: 'id', globalSecondaryIndexes: businessTableGSIs },
+  { tableName: 'Redirect', partitionKey: 'id' },
+  { tableName: 'SubscriberUser', partitionKey: 'mobileNumber' },
+  { tableName: 'PushMessage', partitionKey: 'id', globalSecondaryIndexes: pushTableGSIs},
 ];
 
 export default class DynamoDbStack extends Stack {

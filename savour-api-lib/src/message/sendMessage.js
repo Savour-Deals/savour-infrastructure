@@ -26,8 +26,8 @@ export default async function main(event) {
 		}
 		
 		if (business) {
-			const businessNumber = business.twilio_number;
-      const subscribers = Object.entries(business.subscriber_map).filter((_, subscriber) => subscriber.subscribed);
+			const businessNumber = business.messagingNumber;
+      const subscribers = Object.entries(business.subscriberMap).filter((_, subscriber) => subscriber.subscribed);
 			const messagePromises = Object.keys(subscribers).map((subscriberNumber) => sendMessage(businessNumber, subscriberNumber, message, shortLink));
 			return Promise.all(messagePromises);
     } else {
@@ -49,10 +49,8 @@ export default async function main(event) {
 async function getBusiness(businessId) {
   const params = {
     TableName: process.env.businessTable,
-    // 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'place_id': Business ID identifying Google id
     Key: {
-      place_id: businessId,
+      id: businessId,
     }
   };
 
@@ -74,12 +72,12 @@ async function messageAudit(messageId, businessId, results){
 	const params = {
 		TableName: process.env.pushMessageTable,
 		Item: {
-			uid: messageId,
-			business_id: businessId,
-			send_date_time: new Date().toISOString(),
-			twilio_response: results,
+			id: messageId,
+			businessId: businessId,
+			sentDateTime: new Date().toISOString(),
+			twilioResponse: results,
 		},
-		ConditionExpression: 'attribute_not_exists(unique_id)'
+		ConditionExpression: 'attribute_not_exists(id)'
 	};
 	return dynamoDb.call("put", params)
 	.then(() => messageId)

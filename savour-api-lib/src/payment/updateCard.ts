@@ -1,3 +1,4 @@
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Stripe } from "stripe";
 import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
@@ -6,42 +7,45 @@ const stripe = new Stripe(process.env.stripeKey, {
 	apiVersion: null, //null uses Stripe account's default version
 });
 
-export default async function main(event) {
-  const data = JSON.parse(event.body);
-	const customerId: string = data.customerId;
-	const paymentMethodId: string = data.paymentMethod;
-	const businessId: string = event.pathParameters.place_id;
+interface UpdateCardRequest {
+	customerId: string,
+	paymentMethod: string
+}
+
+export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const request: UpdateCardRequest = JSON.parse(event.body);
+	const businessId: string = event.pathParameters.id;
 
 	//Attach a new payment method to customer
-	return stripe.paymentMethods.attach(paymentMethodId, {
-		customer: customerId
-	}).then((paymentMethod: Stripe.PaymentMethod) => {
+	return stripe.paymentMethods.attach(request.paymentMethod, {
+		customer: request.customerId
+	}).then((paymentMethod) => {
 		//set this new payment method as default
-		return stripe.customers.update(customerId,{
+		return stripe.customers.update(request.customerId,{
 			invoice_settings: {
 				default_payment_method: paymentMethod.id
 			}
 		});
-	}).then((customer: Stripe.Customer) => {
+	}).then((customer) => {
 		//update database with new payment method
 		const params = {
 			TableName: process.env.businessTable,
 			Key: {
 				place_id: businessId,
 			},
-			UpdateExpression: "stripe_payment_method = :stripe_payment_method",
+			UpdateExpression: "stripePaymentMethod = :stripePaymentMethod",
 			ExpressionAttributeValues: {
-				':stripe_payment_method': customer.invoice_settings.default_payment_method,
+				':stripePaymentMethod': customer.invoice_settings.default_payment_method,
 			},
 			ReturnValues: "ALL_NEW"
 		};
-		return dynamoDb.call("update", params).then(() => success({ status: true }))
+		return dynamoDb.call("update", params).then((result) => success(result.Item))
 		.catch((e) => {
 			console.log(e);
-			return failure({ status: false, error: e });
+			return failure({ error: "Error occured saving new payment method" });
 		});
 	}).catch((e) => {
-		console.log(`An error occured updating the default payment method of business ${businessId} (payment: ${paymentMethodId}, customer: ${customerId}): ${e}`);
-		return failure({ status: false, error: "An error occured updating the default payment method of this business" });
+		console.log(`An error occured updating the default payment method of business ${businessId} (payment: ${request.paymentMethod}, customer: ${request.customerId}): ${e}`);
+		return failure({ error: "An error occured updating the default payment method of this business" });
   });
 }

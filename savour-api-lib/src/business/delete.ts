@@ -5,21 +5,15 @@ import { success, failure } from "../common/response-lib";
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const id: string = event.pathParameters.id;
   const params = {
-    TableName: process.env.pushMessageTable,
+    TableName: process.env.businessTable,
     Key: {
       id: id,
     }
   };
-
-  return dynamoDb.call("get", params)
-  .then((result) => {
-    if (result.Item) {
-      return success(result.Item);
-    } else {
-      return failure({ error: "Record not found" });
-    }
+  return dynamoDb.call("delete", params).then(() => {
+    return success(id);
   }).catch((e) => {
     console.log(e);
-    return failure({ error: "An error occured getting the record" });
+    return failure({ error: "An error occured while deleting the business." });
   });
 }

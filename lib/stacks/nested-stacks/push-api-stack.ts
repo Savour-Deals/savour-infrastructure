@@ -36,7 +36,7 @@ export class PushApiStack extends SavourApiNestedStack {
           },
         }),
         httpMethod: HttpMethod.GET,
-        pathParameter: "businessId"
+        pathParameter: "id"
       }
     }));
 
@@ -53,7 +53,7 @@ export class PushApiStack extends SavourApiNestedStack {
           },
         }),
         httpMethod: HttpMethod.GET,
-        pathParameter: "uid"
+        pathParameter: "id"
       }
     }));
 
@@ -63,7 +63,7 @@ export class PushApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "uid"
+        pathParameter: "id"
       }
     }));
 

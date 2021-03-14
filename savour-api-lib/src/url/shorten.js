@@ -21,11 +21,11 @@ export default async function main(longUrl, shortUrlDomain) {
 			const params = {
 				TableName: process.env.redirectTable,
 				Item: {
-					unique_id: token,
-					destination_url: longUrl,
-					shorturl: shortUrl
+					id: token,
+					destinationUrl: longUrl,
+					shortUrl: shortUrl
 				},
-				ConditionExpression: 'attribute_not_exists(unique_id)'
+				ConditionExpression: 'attribute_not_exists(id)'
 			};
 			await dynamoDb.call("put", params);
 			break;

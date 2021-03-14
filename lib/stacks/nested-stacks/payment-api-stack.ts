@@ -45,7 +45,7 @@ export class PaymentApiStack extends SavourApiNestedStack {
       restApi: {
         resource: subscriptionResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     }));
 
@@ -60,7 +60,7 @@ export class PaymentApiStack extends SavourApiNestedStack {
       restApi: {
         resource: subscriptionResource,
         httpMethod: HttpMethod.POST,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
 		});
 		
@@ -73,7 +73,7 @@ export class PaymentApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource.addResource("card"),
         httpMethod: HttpMethod.PUT,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     });
 
@@ -86,7 +86,7 @@ export class PaymentApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource.addResource("usage"),
         httpMethod: HttpMethod.PUT,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     });
   }
