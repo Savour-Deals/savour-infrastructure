@@ -36,7 +36,7 @@ export class PushApiStack extends SavourApiNestedStack {
           },
         }),
         httpMethod: HttpMethod.GET,
-        pathParameter: "btn_id"
+        pathParameter: "businessId"
       }
     }));
 

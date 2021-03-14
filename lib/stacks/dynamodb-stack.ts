@@ -3,12 +3,10 @@ import { App, Stack, StackProps } from "@serverless-stack/resources";
 import { DynamoDBTable, DynamoDbTableProps } from "../constructs/dynamodb/dynamodb-table";
 
 const pushTableGSIs: Array<GlobalSecondaryIndexProps> = [
-  {partitionKey: {name: 'btn_id', type: AttributeType.STRING}, indexName: 'btn_id-index' },
+  {partitionKey: {name: 'business_id', type: AttributeType.STRING}, indexName: 'v-index' },
 ];
 const businessTableGSIs: Array<GlobalSecondaryIndexProps> = [
-  {partitionKey: {name: 'btn_id', type: AttributeType.STRING}, indexName: 'btn_id-index' },
   {partitionKey: {name: 'twilio_number', type: AttributeType.STRING}, indexName: 'twilio_number-index' },
-
 ];
 const DYNAMO_TABLES: Array<DynamoDbTableProps> = [
   { tableName: 'BusinessUser', partitionKey: 'uid' },

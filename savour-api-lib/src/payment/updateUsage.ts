@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.stripeKey, {
 
 export default async function main(event) {
   const data = JSON.parse(event.body);
-	const subscriptionItem: string = data.subscription_item;
+	const subscriptionItem: string = data.subscriptionItem;
 	const quantity: number = data.quantity;
 
 	return stripe.subscriptionItems.createUsageRecord(

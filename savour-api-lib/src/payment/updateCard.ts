@@ -8,13 +8,13 @@ const stripe = new Stripe(process.env.stripeKey, {
 
 export default async function main(event) {
   const data = JSON.parse(event.body);
-	const customerId: string = data.customer_id;
-	const paymentMethodId: string = data.payment_method;
+	const customerId: string = data.customerId;
+	const paymentMethodId: string = data.paymentMethod;
 	const businessId: string = event.pathParameters.place_id;
 
 	//Attach a new payment method to customer
 	return stripe.paymentMethods.attach(paymentMethodId, {
-		customer: data.customer_id
+		customer: customerId
 	}).then((paymentMethod: Stripe.PaymentMethod) => {
 		//set this new payment method as default
 		return stripe.customers.update(customerId,{

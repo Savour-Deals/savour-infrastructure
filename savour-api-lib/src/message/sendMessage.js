@@ -74,7 +74,7 @@ async function messageAudit(messageId, businessId, results){
 	const params = {
 		TableName: process.env.pushMessageTable,
 		Item: {
-			unique_id: messageId,
+			uid: messageId,
 			business_id: businessId,
 			send_date_time: new Date().toISOString(),
 			twilio_response: results,
