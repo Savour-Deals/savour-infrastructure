@@ -3,23 +3,15 @@ import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
 
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-  const id: string = event.pathParameters.id;
+  console.log(event);
+  const data = JSON.parse(event.body);
   const params = {
     TableName: process.env.pushMessageTable,
-    Key: {
-      id: id,
-    }
+    Item: data
   };
-
-  return dynamoDb.call("get", params)
-  .then((result) => {
-    if (result.Item) {
-      return success(result.Item);
-    } else {
-      return failure({ error: "Record not found" });
-    }
-  }).catch((e) => {
+  return dynamoDb.call("put", params).then(() => success(data))
+  .catch((e) => {
     console.log(e);
-    return failure({ error: "An error occured getting the record" });
+    return failure({ error: "An error occured creating the record"});
   });
 }

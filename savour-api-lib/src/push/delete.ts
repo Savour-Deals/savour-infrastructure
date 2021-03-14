@@ -10,16 +10,10 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
       id: id,
     }
   };
-
-  return dynamoDb.call("get", params)
-  .then((result) => {
-    if (result.Item) {
-      return success(result.Item);
-    } else {
-      return failure({ error: "Record not found" });
-    }
+  return dynamoDb.call("delete", params).then(() => {
+    return success(id);
   }).catch((e) => {
     console.log(e);
-    return failure({ error: "An error occured getting the record" });
+    return failure({ error: "An error occured while deleting the record." });
   });
 }

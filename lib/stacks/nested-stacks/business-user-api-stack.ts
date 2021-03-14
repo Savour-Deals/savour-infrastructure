@@ -29,7 +29,7 @@ export class BusinessUserApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.PUT,
-        pathParameter: "uid"
+        pathParameter: "id"
       }
     }));
 
@@ -39,7 +39,7 @@ export class BusinessUserApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.GET,
-        pathParameter: "uid"
+        pathParameter: "id"
       }
     }));
 
@@ -49,7 +49,7 @@ export class BusinessUserApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "uid"
+        pathParameter: "id"
       }
     }));
 

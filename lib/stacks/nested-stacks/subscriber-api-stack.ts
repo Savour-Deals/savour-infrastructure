@@ -29,7 +29,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.PUT,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 
@@ -39,7 +39,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.GET,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 
@@ -49,7 +49,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 

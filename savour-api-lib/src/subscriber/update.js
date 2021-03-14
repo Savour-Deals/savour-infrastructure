@@ -3,43 +3,25 @@ import { success, failure } from "../common/response-lib";
 
 export default async function main(event) {
   const data = JSON.parse(event.body);
-	if (Object.keys(data).length > 0){
-		let updateExp = 'SET ';
-		const expAttVals = {};
-
-		//grab data to update
-		Object.entries(data).forEach(([key, value]) => {
-			updateExp  = updateExp + ' '+ key + ' = :' + key + ',';
-			expAttVals[':' +key] = value;
-		});
-		//Remove trailing ,
-		updateExp = updateExp.substring(0, updateExp.length - 1);
+	const id = event.pathParameters.mobileNumber;
+	const update = dynamoDb.getUpdateExpression(data);
+	if (update) {
 		const params = {
 			TableName: process.env.subscriberUserTable,
-			// 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'mobile_number': Mobile number identifying user
 			Key: {
-				mobile_number: event.pathParameters.mobile_number,
+				mobileNumber: id,
 			},
-			// 'UpdateExpression' defines the attributes to be updated
-			// 'ExpressionAttributeValues' defines the value in the update expression
-			UpdateExpression: updateExp,
-			ExpressionAttributeValues: expAttVals,
-			// 'ReturnValues' specifies if and how to return the item's attributes,
-			// where ALL_NEW returns all attributes of the item after the update; you
-			// can inspect 'result' below to see how it works with different settings
+			UpdateExpression: update.expression,
+			ExpressionAttributeValues: update.values,
 			ReturnValues: "ALL_NEW"
 		};
-
-		try {
-			await dynamoDb.call("update", params);
-			return success({ status: true });
-		} catch (e) {
-			return failure({ status: false });
-		}
+		return dynamoDb.call("update", params).then((response) => success(response.Item))
+		.catch((e) => {
+			console.log(e);
+			return failure({ error: "An error occured updating the subscriber account"});
+		});
 	} else {
-		console.log("Update entry was empty");
 		//nothing to update. return false
-		return success({ status: false });
+		return failure({ error: "Subscriber account update was empty"});
 	}
 }
