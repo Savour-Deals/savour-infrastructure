@@ -21,7 +21,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 		return createTwilioNumber(stage, request.businessId);
 	}).then((phoneNumber) => {
 		return persistNumber(request.businessId, phoneNumber);
-	}).then((business) => success(business))
+	}).then((number) => success(number))
 	.catch((e) => {
 		console.log(`An error occured creating number for request: ${request}: ${e}`);
 		return failure({ error: "An error occured creating your messaging number."})
@@ -40,7 +40,7 @@ function persistNumber(businessId: string, phoneNumber: string) {
 		},
 		ReturnValues: "ALL_NEW"
 	};
-	return dynamoDbLib.call("update", params).then((response) => response.Item);
+	return dynamoDbLib.call("update", params).then(() => phoneNumber);
 }
 
 function createTwilioNumber(stage: string, businessId: string): Promise<string> {
