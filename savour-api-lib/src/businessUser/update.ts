@@ -6,7 +6,7 @@ import BusinessUser from "../model/businessUser";
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const user: BusinessUser = JSON.parse(event.body);
 	const id: string = event.pathParameters.id;
-	const update: dynamoDb.UpdateExpression = dynamoDb.getUpdateExpression(user);
+	const update: dynamoDb.UpdateExpression = dynamoDb.getUpdateExpression(user, ["businessess"]);
 	if (update) {
 		const params = {
 			TableName: process.env.businessUserTable,
