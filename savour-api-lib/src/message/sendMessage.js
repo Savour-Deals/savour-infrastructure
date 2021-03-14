@@ -1,9 +1,10 @@
 const client = require('twilio')(process.env.accountSid, process.env.authToken);
+import * as dynamoDb from "../common/dynamodb-lib";
 import shorten from '../url/shorten';
 import { success, failure } from "../common/response-lib";
 import { v4 as uuidv4 } from 'uuid';
 
-export default async function main(event, context) {
+export default async function main(event) {
 	console.log(event);
 	const data = JSON.parse(event.body);
   const message = data.message;
@@ -11,7 +12,7 @@ export default async function main(event, context) {
   const businessId = data.businessId;
 	const messageId = uuidv4();
 
-	var promises = [getBusiness(businessId)];
+	const promises = [getBusiness(businessId)];
 	if (link) {
 		promises.push(shorten(link, process.env.shortUrlDomain));
 	}
@@ -33,7 +34,7 @@ export default async function main(event, context) {
       throw new Error("Cound not find buiness to send message.");
     }
 	})
-	.then((results) =>  messageAudit(messageId, results.map((r) => r.toJSON())))
+	.then((results) =>  messageAudit(messageId, businessId, results.map((r) => r.toJSON())))
 	.then((result) => success({
 		messageId: result
 	})).catch((e) => {
@@ -59,7 +60,7 @@ async function getBusiness(businessId) {
 }
 
 async function sendMessage(businessNumber, subscriberNumber, message, shortLink) {
-	let messageBody = `${message} ${shortLink ? `${shortLink} ` : ""}HELP 4 help, STOP 2 Unsub.`;
+	const messageBody = `${message} ${shortLink ? `${shortLink} ` : ""}HELP 4 help, STOP 2 Unsub.`;
 
 	return client.messages.create({
 		body: messageBody,
@@ -69,17 +70,18 @@ async function sendMessage(businessNumber, subscriberNumber, message, shortLink)
 }
 
 
-async function messageAudit(messageId, results){
+async function messageAudit(messageId, businessId, results){
 	const params = {
 		TableName: process.env.pushMessageTable,
 		Item: {
-			unique_id: messageId,
+			uid: messageId,
+			business_id: businessId,
 			send_date_time: new Date().toISOString(),
-			twilio_esponse: results,
+			twilio_response: results,
 		},
 		ConditionExpression: 'attribute_not_exists(unique_id)'
 	};
-	return dynamoDbLib.call("put", params)
+	return dynamoDb.call("put", params)
 	.then(() => messageId)
 	.catch((e) => {
 		console.log(e);

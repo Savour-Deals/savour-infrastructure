@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "sst test",
+    "test": "npm run lint-lambda-lib",
+    "lint-lambda-lib": "cd savour-api-lib && npm run lint && cd ../",
     "build-lambda-lib": "cd savour-api-lib && npm run build && cd ../",
+
     "build": "npm run build-lambda-lib && sst build",
     "build-and-deploy-prod": "npm run build-lambda-lib && sst deploy --stage prod",
     "build-and-deploy-dev": "npm run build-lambda-lib && sst deploy --stage dev",
+    
     "deploy": "sst deploy",
     "remove": "sst remove"
   },

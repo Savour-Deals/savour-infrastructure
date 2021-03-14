@@ -2,17 +2,17 @@ const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 import * as dynamoDb from "../common/dynamodb-lib";
 
 function randomString(length) {
-	var result = '';
-	for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+	let result = '';
+	for (let i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 	return result;
 }
 
 export default async function main(longUrl, shortUrlDomain) {
 	if (!longUrl) return;
 	
-	var token = '';
-	var shortUrl = '';
-	var attempt = 0;
+	let token = '';
+	let shortUrl = '';
+	let attempt = 0;
 	while (attempt < 5){
 		attempt++;
 		token = randomString(parseInt(process.env.tokenSize));

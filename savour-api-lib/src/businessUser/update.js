@@ -1,11 +1,11 @@
 import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
 
-export default async function main(event, context) {
+export default async function main(event) {
   const data = JSON.parse(event.body);
 	if (Object.keys(data).length > 0){
-		var updateExp = 'SET ';
-		var expAttVals = {};
+		let updateExp = 'SET ';
+		const expAttVals = {};
 
 		//grab data to update
 		Object.entries(data).forEach(([key, value]) => {

@@ -4,7 +4,7 @@ service: savour-api-lib
 
 frameworkVersion: '2'
 plugins:
-  - serverless-webpack
+  - serverless-bundle
 
 provider:
   name: aws
@@ -12,6 +12,10 @@ provider:
 
 package:
   individually: true
+
+custom:
+  bundle:
+    linting: false # We do linting seperate from bundling
 
 functions:
   ######################################################
