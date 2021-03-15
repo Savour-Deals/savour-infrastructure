@@ -14,18 +14,20 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
   const request: CreateNumberRequest = JSON.parse(event.body);
 	console.log(request);
 
-	return new Promise<string>(() => {
-		if (stage === 'dev') {
-			return "+123456789";
+	return new Promise<string>((resolve, reject) => {
+		if (stage === 'prod') {
+			return createTwilioNumber(stage, request.businessId);
 		}
-		return createTwilioNumber(stage, request.businessId);
+		resolve("+123456789");
 	}).then((phoneNumber) => {
 		return persistNumber(request.businessId, phoneNumber);
-	}).then((number) => success(number))
+	}).then((number) => {
+		return success(number);
+	})
 	.catch((e) => {
 		console.log(`An error occured creating number for request: ${request}: ${e}`);
 		return failure({ error: "An error occured creating your messaging number."})
-	})
+	});
 }
 
 function persistNumber(businessId: string, phoneNumber: string) {
@@ -34,7 +36,7 @@ function persistNumber(businessId: string, phoneNumber: string) {
 		Key: {
 			id: businessId,
 		},
-		UpdateExpression: "SET messagingNumer = :number",
+		UpdateExpression: "SET messagingNumber = :number",
 		ExpressionAttributeValues: {
 			':number': phoneNumber
 		},

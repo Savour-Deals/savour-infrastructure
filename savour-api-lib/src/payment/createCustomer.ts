@@ -15,7 +15,7 @@ interface CreateCustomerRequest {
 	paymentMethod: string
 }
 
-export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export default function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const request: CreateCustomerRequest = JSON.parse(event.body);
 	const businessId: string = event.pathParameters.id;
 
