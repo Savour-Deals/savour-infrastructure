@@ -15,7 +15,6 @@ export interface SavourApiLambdaProps {
 		httpMethod: string
 		pathParameter?: string
 		lambdaIntegrationOptions?: LambdaIntegrationOptions,
-		authType?: AuthorizationType
 	}
 }
 
@@ -93,7 +92,7 @@ export class SavourApiLambda extends Construct {
 		}
 		
 		this.method = apiResource.addMethod(restApi.httpMethod, new LambdaIntegration(handler, integrationOptions), {
-				authorizationType: props.restApi.authType ? props.restApi.authType : AuthorizationType.IAM,
+				authorizationType: AuthorizationType.IAM,
 				methodResponses: methodResponses,
 			}
 		);

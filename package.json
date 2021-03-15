@@ -6,11 +6,9 @@
     "test": "npm run lint-lambda-lib",
     "lint-lambda-lib": "cd savour-api-lib && npm run lint && cd ../",
     "build-lambda-lib": "cd savour-api-lib && npm run build && cd ../",
-
     "build": "npm run build-lambda-lib && sst build",
     "deploy-prod": "sst deploy --stage prod",
     "deploy-dev": "sst deploy --stage dev",
-    
     "deploy": "sst deploy",
     "remove": "sst remove"
   },
