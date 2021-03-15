@@ -12,7 +12,7 @@ export function getUpdateExpression(item, appendAttributes = []) {
 
 		//grab data to update
 		Object.entries(item).forEach(([key, value]) => {
-      if (appendAttributes.contains(key)) {
+      if (appendAttributes.includes(key)) {
 				updateExp = `${updateExp} ${key} = list_append(${key}, :${key}),`;
 				expAttVals[`:${key}`] = [value];
 			} else {

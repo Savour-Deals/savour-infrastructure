@@ -12,12 +12,18 @@ interface CreateCustomerRequest {
 	customerId?: string,
 	email: string,
   name: string,
-	paymentMethod: string
+	paymentMethod: string,
+	subscriptions: {
+		recurring: string,
+		usage: string,
+	}
 }
 
-export default function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const request: CreateCustomerRequest = JSON.parse(event.body);
 	const businessId: string = event.pathParameters.id;
+	const recurring = request.subscriptions.recurring;
+	const usage = request.subscriptions.usage;
 
 	return getBusiness(businessId).then((business) => {
 		if (!business) {
@@ -40,27 +46,25 @@ export default function main(event: APIGatewayProxyEvent): Promise<APIGatewayPro
 		return stripe.subscriptions.create({
 			customer: customerId,
 			items: [
-				{plan: process.env.recurringPlanID},
-				{plan: process.env.usagePlanID}
+				{ price: request.subscriptions.recurring },
+				{ price: request.subscriptions.usage },
+
 			],
 		});
 	}).then((subscription) => {
 		//subscription created succesfully. Store in dynamoDB and return a success		
-		const usageSubId = subscription.items.data.find((item) => item.plan.id === process.env.usagePlanID).id;
-		const recurringSubId = subscription.items.data.find((item) => item.plan.id === process.env.recurringPlanID).id;
-
 		const params = {
 			TableName: process.env.businessTable,
 			Key: {
-				place_id: businessId,
+				id: businessId,
 			},
 			UpdateExpression: "SET stripeCustomerId = :stripeCustomerId, stripePaymentMethod = :stripePaymentMethod, stripeSubId = :stripeSubId, stripeRecurringSubItem = :stripeRecurringSubItem, stripeUsageSubItem = :stripeUsageSubItem",
 			ExpressionAttributeValues: {
 				':stripeCustomerId': subscription.customer,
 				':stripePaymentMethod': request.paymentMethod,
 				':stripeSubId': subscription.id,
-				':stripeRecurringSubItem': recurringSubId,
-				':stripeUsageSubItem': usageSubId,
+				':stripeRecurringSubItem': request.subscriptions.recurring,
+				':stripeUsageSubItem': request.subscriptions.usage ,
 			},
 			ReturnValues: "ALL_NEW"
 		};
@@ -95,9 +99,12 @@ function getBusiness(businessId: string): Promise<Business> {
 function createStripeCustomer(email: string, businessId: string, name: string, paymentMethod: string): Promise<Stripe.Customer>{
 	return stripe.customers.create({
 		email: email,
-		metadata: {place_id: businessId},
+		metadata: {businessId: businessId},
 		name: name,
-		payment_method: paymentMethod
+		payment_method: paymentMethod,
+		invoice_settings: {
+			default_payment_method: paymentMethod
+		}
 	}).catch((e) => {
 		console.log(e);
 		throw new Error("An error occured creating the customer account for this business");
