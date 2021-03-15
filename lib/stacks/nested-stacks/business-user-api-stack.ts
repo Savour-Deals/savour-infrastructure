@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { Cors, RestApi } from "@aws-cdk/aws-apigateway";
+import { AuthorizationType, Cors, RestApi } from "@aws-cdk/aws-apigateway";
 
 export class BusinessUserApiStack extends SavourApiNestedStack {
   readonly name = "businessUser";
@@ -59,6 +59,7 @@ export class BusinessUserApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.POST,
+        authType: AuthorizationType.NONE //this will be called before a user is logged in
       }
     }));
   }
