@@ -6,9 +6,9 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
   const businessId: string = event.pathParameters.id;
   const params = {
     TableName: process.env.pushMessageTable,
-    IndexName: "business_id-index",
+    IndexName: "businessId-index",
 
-    KeyConditionExpression: "business_id = :id",
+    KeyConditionExpression: "businessId = :id",
     ExpressionAttributeValues: {
       ":id": businessId
     }
