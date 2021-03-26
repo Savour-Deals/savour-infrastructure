@@ -22,8 +22,6 @@ interface CreateCustomerRequest {
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const request: CreateCustomerRequest = JSON.parse(event.body);
 	const businessId: string = event.pathParameters.id;
-	const recurring = request.subscriptions.recurring;
-	const usage = request.subscriptions.usage;
 
 	return getBusiness(businessId).then((business) => {
 		if (!business) {
@@ -41,7 +39,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 			return createStripeCustomer(request.email, businessId, request.name, request.paymentMethod)
 			.then((customer) => customer.id);
 		}
-		return request.customerId;
+		Promise.resolve(request.customerId);
 	}).then((customerId) => {
 		return stripe.subscriptions.create({
 			customer: customerId,

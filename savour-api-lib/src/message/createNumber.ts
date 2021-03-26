@@ -4,7 +4,7 @@ import * as twilio from "../common/twilio-lib";
 import { getSSMParameter } from './../common/ssm-lib';
 import { success, failure } from "../common/response-lib";
 
-interface CreateNumberRequest{
+interface CreateNumberRequest {
 	businessId: string
 }
 
@@ -14,18 +14,14 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
   const request: CreateNumberRequest = JSON.parse(event.body);
 	console.log(request);
 
-	return new Promise<string>((resolve, reject) => {
-		if (stage === 'prod') {
-			return createTwilioNumber(stage, request.businessId);
-		}
-		resolve("+123456789");
-	}).then((phoneNumber) => {
+	return createTwilioNumber(stage, request.businessId)
+	.then((phoneNumber) => {
 		return persistNumber(request.businessId, phoneNumber);
 	}).then((number) => {
 		return success(number);
 	})
 	.catch((e) => {
-		console.log(`An error occured creating number for request: ${request}: ${e}`);
+		console.log(`An error occured creating number for request: ${JSON.stringify(request)}: ${e}`);
 		return failure({ error: "An error occured creating your messaging number."})
 	});
 }
@@ -48,12 +44,12 @@ function persistNumber(businessId: string, phoneNumber: string) {
 function createTwilioNumber(stage: string, businessId: string): Promise<string> {
 	return Promise.all([
 		getSSMParameter({Name: `/api/execute-url/${stage}`}),
-		twilio.getLocalNumber()
+		twilio.getLocalNumber(stage)
 	])
-	.then(([url, phoneResource]) => {
+	.then(([url, phoneNumber]) => {
 		const webhook = url + process.env.path;
 		//provision phone number
-		return twilio.provisionNumber(businessId, phoneResource.phoneNumber, webhook);
+		return twilio.provisionNumber(businessId, phoneNumber, webhook);
 	}).then(p => p.phoneNumber)
 	.catch((e) => {
 		console.log(e);

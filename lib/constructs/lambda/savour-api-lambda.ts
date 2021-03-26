@@ -7,6 +7,7 @@ export interface SavourApiLambdaProps {
 	// Any props to pass to this generic lambda API should be added here
 	api: string,
 	operation: string,
+	memorySize?: number,
 	environment?: {	
 		[key: string]: string;
 	},
@@ -47,13 +48,20 @@ export class SavourApiLambda extends Construct {
 		const handler = new Function(this, `${props.api}-${props.operation}`, {
 			runtime: Runtime.NODEJS_10_X,
 			code: Code.fromAsset(`./savour-api-lib/dist/${props.api}-${props.operation}.zip`),
+			memorySize: props.memorySize,
 			handler: `src/${props.api}/${props.operation}.default`,
 			environment: {...commonEnv, ...props.environment},
 		});
 
+		//TODO limit scope of resource accesss
 		handler.addToRolePolicy(new PolicyStatement({
       resources: ['*'],
       actions: ['dynamodb:*'],
+    }));
+
+		handler.addToRolePolicy(new PolicyStatement({
+      resources: ['*'],
+      actions: ['ssm:*'],
     }));
 		
 		const methodResponses: MethodResponse[] = [];

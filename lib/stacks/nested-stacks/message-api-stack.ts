@@ -12,8 +12,9 @@ export class MessageApiStack extends SavourApiNestedStack {
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApi', props);
 
-    const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', '/twilio/accountSid');
-    const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', '/twilio/authToken');
+    const stage = scope.node.tryGetContext('stage');
+    const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', `/twilio/accountSid/${stage}`);
+    const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', `/twilio/authToken/${stage}`);
 
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
@@ -57,6 +58,7 @@ export class MessageApiStack extends SavourApiNestedStack {
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "createNumber",
+      memorySize: 1024,
       environment: {
         accountSid: accountSid,
         authToken: authToken,

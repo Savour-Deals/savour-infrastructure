@@ -14,5 +14,6 @@ export default interface Business {
 }
 
 interface SubscriberInfo {
-	subscribed: boolean
+	subscribed: boolean,
+	timestamp: string
 }
