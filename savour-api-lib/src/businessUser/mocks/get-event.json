@@ -1,6 +1,6 @@
 {
   "pathParameters": {
-    "uid": "123456"
+    "id": "123456"
   },
   "requestContext": {
     "identity": {

@@ -1,4 +1,4 @@
-import { Construct, Fn } from "@aws-cdk/core";
+import { Construct, Duration, Fn } from "@aws-cdk/core";
 import { Function, Code, Runtime } from "@aws-cdk/aws-lambda";
 import { PolicyStatement } from "@aws-cdk/aws-iam";
 import { LambdaIntegration, MethodResponse, LambdaIntegrationOptions, AuthorizationType, Resource, Method } from "@aws-cdk/aws-apigateway"
@@ -8,6 +8,7 @@ export interface SavourApiLambdaProps {
 	api: string,
 	operation: string,
 	memorySize?: number,
+	timeout?: number,
 	environment?: {	
 		[key: string]: string;
 	},
@@ -49,6 +50,7 @@ export class SavourApiLambda extends Construct {
 			runtime: Runtime.NODEJS_10_X,
 			code: Code.fromAsset(`./savour-api-lib/dist/${props.api}-${props.operation}.zip`),
 			memorySize: props.memorySize,
+			timeout: props.timeout? Duration.seconds(props.timeout) : Duration.seconds(10),
 			handler: `src/${props.api}/${props.operation}.default`,
 			environment: {...commonEnv, ...props.environment},
 		});

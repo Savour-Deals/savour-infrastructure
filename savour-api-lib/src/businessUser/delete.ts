@@ -1,18 +1,13 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import * as dynamoDb from "../common/dynamodb-lib";
+import businessUserDao from "src/dao/businessUserDao";
 import { success, failure } from "../common/response-lib";
 
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const id: string = event.pathParameters.id;
-  const params = {
-    TableName: process.env.businessUserTable,
-    Key: {
-      id: id,
-    }
-  };
-  return dynamoDb.call("delete", params).then(() => {
-    return success(id);
-  }).catch((e) => {
+  
+  return businessUserDao.delete(id)
+  .then((result) => success(result))
+  .catch((e) => {
     console.log(e);
     return failure({ error: "An error occured while deleting the business user account." });
   });

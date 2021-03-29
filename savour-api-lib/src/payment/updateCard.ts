@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Stripe } from "stripe";
-import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
+import businessDao from 'src/dao/businessDao';
 
 const stripe = new Stripe(process.env.stripeKey, {
 	apiVersion: null, //null uses Stripe account's default version
@@ -21,30 +21,20 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 		customer: request.customerId
 	}).then((paymentMethod) => {
 		//set this new payment method as default
-		return stripe.customers.update(request.customerId,{
-			invoice_settings: {
-				default_payment_method: paymentMethod.id
-			}
-		});
-	}).then((customer) => {
+		return Promise.all([
+			stripe.customers.update(request.customerId,{
+				invoice_settings: {
+					default_payment_method: paymentMethod.id
+				}
+			}),
+			businessDao.get(businessId)
+		])
+	}).then(([customer, business]) => {
 		//update database with new payment method
-		const params = {
-			TableName: process.env.businessTable,
-			Key: {
-				place_id: businessId,
-			},
-			UpdateExpression: "stripePaymentMethod = :stripePaymentMethod",
-			ExpressionAttributeValues: {
-				':stripePaymentMethod': customer.invoice_settings.default_payment_method,
-			},
-			ReturnValues: "ALL_NEW"
-		};
-		return dynamoDb.call("update", params).then((result) => success(result.Item))
-		.catch((e) => {
-			console.log(e);
-			return failure({ error: "Error occured saving new payment method" });
-		});
-	}).catch((e) => {
+		business.stripePaymentMethod = customer.invoice_settings.default_payment_method as string;
+		return businessDao.update(businessId, business);
+	}).then((business) => success(business))
+	.catch((e) => {
 		console.log(`An error occured updating the default payment method of business ${businessId} (payment: ${request.paymentMethod}, customer: ${request.customerId}): ${e}`);
 		return failure({ error: "An error occured updating the default payment method of this business" });
   });

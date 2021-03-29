@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Stripe } from "stripe";
-import * as dynamoDb from "../common/dynamodb-lib";
+import businessDao from 'src/dao/businessDao';
 import { success, failure } from "../common/response-lib";
 
 const stripe = new Stripe(process.env.stripeKey, {
@@ -21,15 +21,8 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 		prorate: true
 	}).then(() => {
 		//now delete all corresponding data in AWS
-		const params = {
-			TableName: process.env.businessTable,
-			Key: {
-				place_id: businessId,
-			},
-			UpdateExpression: "REMOVE stripePaymentMethod, stripeSubId, stripeRecurringSubItem, stripeUsageSubItem",
-			ReturnValues: "ALL_NEW"
-		};
-		return dynamoDb.call("update", params).then(() => success(request.subscriptionId))
+		businessDao.unsubscribe(businessId)
+		.then(() => success(request.subscriptionId))
 		.catch((e) => {
 			console.log(e);
 			throw new Error("Failed to remove subscription data.")

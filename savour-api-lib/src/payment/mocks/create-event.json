@@ -1,7 +1,7 @@
 {
-  "body": "{\"customer_id\":\"cus_GnPsTxuh0IZ91J\",\"payment_method\":\"card_1GFr2IFdZgF3d0XelZRONZJv\"}",
+  "body": "{\"email\": \"test@test.com\",\"name\": \"name\",\"paymentMethod\": \"pm_1IVnkBFdZgF3d0XePxvH4pVP\",\"subscriptions\": {\"recurring\": \"price_1IR58xFdZgF3d0Xe5IaMr0KY\",\"usage\": \"price_1IV8SPFdZgF3d0XeK1qX4bW1\"}}",
   "pathParameters": {
-    "place_id": "123456"
+    "id": "testBusiness"
   },
   "requestContext": {
     "identity": {

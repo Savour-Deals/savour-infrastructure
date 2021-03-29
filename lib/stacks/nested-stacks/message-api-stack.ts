@@ -33,6 +33,8 @@ export class MessageApiStack extends SavourApiNestedStack {
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "hooks",
+      memorySize: 512,
+      timeout: 60,
       restApi: {
         resource: apiResource.addResource('hooks'),
         httpMethod: HttpMethod.POST,
@@ -58,7 +60,8 @@ export class MessageApiStack extends SavourApiNestedStack {
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "createNumber",
-      memorySize: 1024,
+      memorySize: 512,
+      timeout: 60,
       environment: {
         accountSid: accountSid,
         authToken: authToken,
@@ -73,6 +76,8 @@ export class MessageApiStack extends SavourApiNestedStack {
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "sendMessage",
+      memorySize: 1024,
+      timeout: 900,
       environment: {
         accountSid: accountSid,
         authToken: authToken,

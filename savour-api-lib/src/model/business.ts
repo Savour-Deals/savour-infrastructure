@@ -9,7 +9,7 @@ export default interface Business {
 	stripeSubId?: string,
 	stripeRecurringSubItem?: string,
 	stripeUsageSubItem?: string,
-	twilioNumber?: string,
+	messagingNumber?: string,
 	subscriberMap: Map<string, SubscriberInfo>
 }
 

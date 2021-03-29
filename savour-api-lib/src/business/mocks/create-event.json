@@ -1,5 +1,5 @@
 {
-  "body": "{\"place_id\":\"123456\",\"business_name\":\"Savour Deals\",\"btn_id\":\"123456\",\"double_click_deal\":\"Double Click Deal\",\"long_click_deal\":\"Long Click Deal\",\"onboard_deal\":\"Onboard Deal\",\"single_click_deal\":\"Single Click Deal\",\"subscriber_dict\":\"{}\",\"twilio_number\":\"+17633249713\"}",
+  "body": "{\"id\":\"testBusiness\",\"businessName\":\"Savour Deals\",\"presetMessages\":[\"Preset 1\", \"Preset 2\", \"Preset 3\"],\"onboardMessage\":\"Onboard message\",\"subscriberMap\":\"{}\"}",
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"

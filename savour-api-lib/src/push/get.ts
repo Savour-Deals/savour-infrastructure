@@ -1,20 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
+import pushDao from "src/dao/pushDao";
 
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const id: string = event.pathParameters.id;
-  const params = {
-    TableName: process.env.pushMessageTable,
-    Key: {
-      id: id,
-    }
-  };
-
-  return dynamoDb.call("get", params)
+  
+  return pushDao.get(id)
   .then((result) => {
-    if (result.Item) {
-      return success(result.Item);
+    if (result) {
+      return success(result);
     } else {
       return failure({ error: "Record not found" });
     }

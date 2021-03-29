@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import * as dynamoDbLib from "../common/dynamodb-lib";
 import * as twilio from "../common/twilio-lib";
 import { getSSMParameter } from './../common/ssm-lib';
 import { success, failure } from "../common/response-lib";
+import businessDao from 'src/dao/businessDao';
 
 interface CreateNumberRequest {
 	businessId: string
@@ -27,18 +27,12 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 }
 
 function persistNumber(businessId: string, phoneNumber: string) {
-	const params = {
-		TableName: process.env.businessTable,
-		Key: {
-			id: businessId,
-		},
-		UpdateExpression: "SET messagingNumber = :number",
-		ExpressionAttributeValues: {
-			':number': phoneNumber
-		},
-		ReturnValues: "ALL_NEW"
-	};
-	return dynamoDbLib.call("update", params).then(() => phoneNumber);
+	return businessDao.get(businessId).then((business) => {
+		return businessDao.update(businessId, {
+			...business,
+			messagingNumber: phoneNumber
+		});
+	}).then((business) => business.messagingNumber);
 }
 
 function createTwilioNumber(stage: string, businessId: string): Promise<string> {

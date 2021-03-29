@@ -1,7 +1,7 @@
 {
-  "body": "{\"customer_id\":\"cus_GnPsTxuh0IZ91J\",\"payment_method\":\"card_1GFr2IFdZgF3d0XelZRONZJv\"}",
+  "body": "{\"customerId\":\"cus_JCXeq6ygQzlsbC\",\"paymentMethod\":\"pm_card_visa\"}",
   "pathParameters": {
-    "place_id": "123456"
+    "id": "testBusiness"
   },
   "requestContext": {
     "identity": {
