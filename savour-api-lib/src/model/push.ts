@@ -1,6 +1,11 @@
 export default interface PushItem {
 	id: string,
+	campaignStatus: string,
 	businessId: string,
-	sentDateTime: string,
-	twilioResponse: any[],
+	message: string,
+	link?: string,
+	campaignDateTimeUtc: string
+	createdDateTimeUtc: string,
+	lastUpdatedDateTimeUtc: string,
+	twilioResponse?: any[],
 }

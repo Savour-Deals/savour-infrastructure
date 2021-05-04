@@ -23,7 +23,8 @@ export function provisionNumber(businessId: string, phoneNumber: string, webhook
 }
 
 export function sendMessage(businessNumber: string, subscriberNumber: string, message: string, shortLink: string): Promise<MessageInstance> {
-	const messageBody = `${message} ${shortLink ? `${shortLink} ` : ""}HELP 4 help, STOP 2 Unsub.`;
+	const link = shortLink ? `${shortLink} ` : ""
+	const messageBody = `${message} ${link}HELP 4 help, STOP 2 Unsub.`;
 
 	return client.messages.create({
 		body: messageBody,

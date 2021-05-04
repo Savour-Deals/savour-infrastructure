@@ -8,7 +8,6 @@ async function create(pushItem: PushItem): Promise<PushItem> {
 	const params: DocumentClient.PutItemInput = {
     TableName: TABLE_NAME,
     Item: pushItem,
-    ConditionExpression: 'attribute_not_exists(id)'
   };
   await DynamoDb.put(params);
   return pushItem;
