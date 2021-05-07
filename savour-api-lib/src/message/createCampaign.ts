@@ -22,7 +22,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 	const campaignId = uuidv4();
 	const now = new Date().toISOString();
 
-	let auditRecord: PushItem = {
+	const auditRecord: PushItem = {
 		id: campaignId,
 		campaignStatus: "SCHEDULED",
 		businessId: request.businessId,
