@@ -1,4 +1,4 @@
-import { APIGatewayProxyResult, SQSEvent } from "aws-lambda";
+import { SQSEvent } from "aws-lambda";
 
 import Business from 'src/model/business';
 import PushItem from 'src/model/push';
