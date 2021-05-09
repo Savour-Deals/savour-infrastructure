@@ -1,6 +1,6 @@
 {
   "pathParameters": {
-    "place_id": "123456"
+    "id": "testBusiness"
   },
   "requestContext": {
     "identity": {

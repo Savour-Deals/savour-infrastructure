@@ -66,7 +66,11 @@ export default class LambdaApiStack extends Stack {
     
     // Make sure all API stacks are deployed before deploying ApiGateway
     stacks.forEach((stack) => {
-      stack.apiLambdas.forEach((api) => (deployment.node.defaultChild! as CfnResource).addDependsOn(api.method.node.defaultChild as CfnResource))//deployment.node.addDependency(api.method))
+      stack.apiLambdas.forEach((api) => {
+        if (api.method){
+          (deployment.node.defaultChild! as CfnResource).addDependsOn(api.method.node.defaultChild as CfnResource)
+        }
+      }) 
     });
 
     new Stage(this, 'Stage', { deployment, stageName: `${scope.stage}` });

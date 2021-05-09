@@ -1,7 +1,7 @@
 {
-  "body": "{\"subscription_item\":\"si_GnSZFlW7ITTLeD\",\"quantity\":250}",
+  "body": "{\"subscriptionItem\":\"si_JCXnNyKjspONH1\",\"quantity\":250}",
   "pathParameters": {
-    "place_id": "123456"
+    "place_id": "testBusiness"
   },
   "requestContext": {
     "identity": {

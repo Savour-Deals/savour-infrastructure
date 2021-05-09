@@ -1,7 +1,7 @@
 {
-  "body": "{\"double_click_deal\":\"Double Click Deal 1\",\"long_click_deal\":\"Long Click Deal 1\",\"onboard_deal\":\"Onboard Deal 1\",\"single_click_deal\":\"Single Click Deal 1\"}",
+  "body": "{\"presetMessages\":[\"Preset 1\", \"Preset 2\", \"Preset new\"]}",
   "pathParameters": {
-    "place_id": "123456"
+    "id": "testBusiness"
   },
   "requestContext": {
     "identity": {

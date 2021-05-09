@@ -97,6 +97,9 @@ functions:
   message-sendMessage:
     handler: src/message/sendMessage.default
 
+  message-createCampaign:
+    handler: src/message/createCampaign.default
+
   message-createNumber:
     handler: src/message/createNumber.default
 

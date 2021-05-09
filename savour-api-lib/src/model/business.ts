@@ -9,10 +9,11 @@ export default interface Business {
 	stripeSubId?: string,
 	stripeRecurringSubItem?: string,
 	stripeUsageSubItem?: string,
-	twilioNumber?: string,
+	messagingNumber?: string,
 	subscriberMap: Map<string, SubscriberInfo>
 }
 
 interface SubscriberInfo {
-	subscribed: boolean
+	subscribed: boolean,
+	timestamp: string
 }

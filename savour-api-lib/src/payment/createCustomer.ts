@@ -1,7 +1,7 @@
+import businessDao from 'src/dao/businessDao';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import Business from "src/model/business";
 import { Stripe } from "stripe";
-import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
 
 const stripe = new Stripe(process.env.stripeKey, {
@@ -12,7 +12,7 @@ interface CreateCustomerRequest {
 	customerId?: string,
 	email: string,
   name: string,
-	paymentMethod: string,
+	paymentMethod?: string,
 	subscriptions: {
 		recurring: string,
 		usage: string,
@@ -22,10 +22,9 @@ interface CreateCustomerRequest {
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const request: CreateCustomerRequest = JSON.parse(event.body);
 	const businessId: string = event.pathParameters.id;
-	const recurring = request.subscriptions.recurring;
-	const usage = request.subscriptions.usage;
-
-	return getBusiness(businessId).then((business) => {
+	let business: Business;
+	return businessDao.get(businessId).then((result) => {
+		business = result;
 		if (!business) {
 			throw new Error("Business does not exist.");
 		}
@@ -41,34 +40,26 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 			return createStripeCustomer(request.email, businessId, request.name, request.paymentMethod)
 			.then((customer) => customer.id);
 		}
-		return request.customerId;
+		return Promise.resolve(request.customerId);
 	}).then((customerId) => {
 		return stripe.subscriptions.create({
 			customer: customerId,
 			items: [
 				{ price: request.subscriptions.recurring },
 				{ price: request.subscriptions.usage },
-
 			],
 		});
 	}).then((subscription) => {
-		//subscription created succesfully. Store in dynamoDB and return a success		
-		const params = {
-			TableName: process.env.businessTable,
-			Key: {
-				id: businessId,
-			},
-			UpdateExpression: "SET stripeCustomerId = :stripeCustomerId, stripePaymentMethod = :stripePaymentMethod, stripeSubId = :stripeSubId, stripeRecurringSubItem = :stripeRecurringSubItem, stripeUsageSubItem = :stripeUsageSubItem",
-			ExpressionAttributeValues: {
-				':stripeCustomerId': subscription.customer,
-				':stripePaymentMethod': request.paymentMethod,
-				':stripeSubId': subscription.id,
-				':stripeRecurringSubItem': request.subscriptions.recurring,
-				':stripeUsageSubItem': request.subscriptions.usage ,
-			},
-			ReturnValues: "ALL_NEW"
-		};
-		return dynamoDb.call("update", params).then((response) => success(response.Item))
+		
+		//subscription created succesfully. Store in dynamoDB and return a success
+		business.stripeCustomerId = subscription.customer as string;
+		business.stripePaymentMethod = request.paymentMethod;
+		business.stripeSubId = subscription.id;
+		business.stripeRecurringSubItem = request.subscriptions.recurring;
+		business.stripeUsageSubItem = request.subscriptions.usage ;
+		
+		return businessDao.update(business.id, business)
+		.then((result) => success(result))
 		.catch((e) => {
 			console.log(e);
 			throw new Error("An error occured persisting this business' subscription data");
@@ -80,23 +71,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 	});
 }
 
-
-function getBusiness(businessId: string): Promise<Business> {
-	const params = {
-    TableName: process.env.businessTable,
-    Key: {
-      id: businessId,
-    }
-  };
-	return dynamoDb.call("get", params)
-	.then((result) => result.Item)
-	.catch((e) => {
-		console.log(e);
-		throw new Error("An error occured looking up the business")
-	});
-}
-
-function createStripeCustomer(email: string, businessId: string, name: string, paymentMethod: string): Promise<Stripe.Customer>{
+function createStripeCustomer(email: string, businessId: string, name: string, paymentMethod: string): Promise<Stripe.Customer> {
 	return stripe.customers.create({
 		email: email,
 		metadata: {businessId: businessId},

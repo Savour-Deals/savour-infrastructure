@@ -1,7 +1,7 @@
 {
-  "body": "{\"email\":\"test1@test.com\",\"first_name\":\"Jon\",\"last_name\":\"Jones\"}",
+  "body": "{\"email\":\"test1@test.com\",\"firstName\":\"Jon\",\"lastName\":\"Jones\",\"businesses\":\"[\"123456\"]\"}",
   "pathParameters": {
-    "uid": "123456"
+    "id": "123456"
   },
   "requestContext": {
     "identity": {

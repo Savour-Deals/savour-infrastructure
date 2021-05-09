@@ -1,23 +1,13 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import * as dynamoDb from "../common/dynamodb-lib";
 import { success, failure } from "../common/response-lib";
+import pushDao from "src/dao/pushDao";
 
 export default async function main(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const businessId: string = event.pathParameters.id;
-  const params = {
-    TableName: process.env.pushMessageTable,
-    IndexName: "businessId-index",
-
-    KeyConditionExpression: "businessId = :id",
-    ExpressionAttributeValues: {
-      ":id": businessId
-    }
-  };
-
-  return dynamoDb.call("query", params)
-  .then((result) => {
-    return success(result.Items);
-  }).catch((e) => {
+  
+  return pushDao.getAllForBusiness(businessId)
+  .then((result) => success(result))
+  .catch((e) => {
     console.log(e);
     return failure({ error: "An error occured getting the records" });
   });
