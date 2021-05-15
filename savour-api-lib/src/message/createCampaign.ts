@@ -41,7 +41,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 		}),
 		campaignDateTimeUtc: request.campaignDateTimeUtc
 	})).then(() =>  success({
-		campaignId: campaignId
+		campaign: auditRecord
 	})).catch((e) => {
 		console.log(e);
 		return messageAudit({
