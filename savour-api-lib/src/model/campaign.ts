@@ -1,6 +1,7 @@
-export default interface PushItem {
+export default interface Campaign {
 	id: string,
 	campaignStatus: string,
+	campaignName: string,
 	businessId: string,
 	message: string,
 	link?: string,

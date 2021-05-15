@@ -1,7 +1,7 @@
 import { SQSEvent } from "aws-lambda";
 
 import Business from 'src/model/business';
-import PushItem from 'src/model/push';
+import Campaign from 'src/model/campaign';
 
 import { success, failure } from "../common/response-lib";
 import * as twilio from "../common/twilio-lib";
@@ -28,7 +28,7 @@ export default async function main(event: SQSEvent): Promise<any> {
 }
 
 async function handleSendMessageRecord(request: SendMessageRequest): Promise<any> {
-	let campaign: PushItem;
+	let campaign: Campaign;
 
 	return pushDao.get(request.campaignId).then((campaignRecord) => {
 		campaign = campaignRecord;
@@ -73,7 +73,7 @@ async function handleSendMessageRecord(request: SendMessageRequest): Promise<any
 	});
 }
 
-async function messageAudit(auditRecord: PushItem): Promise<PushItem> {
+async function messageAudit(auditRecord: Campaign): Promise<Campaign> {
 	console.log(auditRecord);
 	return pushDao.create(auditRecord)
 	.then((result) => result)
