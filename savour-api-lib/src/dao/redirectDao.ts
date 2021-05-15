@@ -9,14 +9,14 @@ interface RedirectItem {
 	shortUrl: string
 }
 
-async function create(pushItem: RedirectItem): Promise<RedirectItem> {
+async function create(campaign: RedirectItem): Promise<RedirectItem> {
 	const params: DocumentClient.PutItemInput = {
     TableName: TABLE_NAME,
-    Item: pushItem,
+    Item: campaign,
     ConditionExpression: 'attribute_not_exists(id)'
   };
   await DynamoDb.put(params);
-  return pushItem;
+  return campaign;
 }
 
 async function get(id: string): Promise<RedirectItem> {

@@ -5,11 +5,12 @@ import { success, failure } from "../common/response-lib";
 import * as stepFunctions from "../common/stepfunction-lib";
 
 import pushDao from "src/dao/pushDao";
-import PushItem from 'src/model/push';
+import Campaign from 'src/model/campaign';
 
 const stepFunctionArn: string = process.env.campaignStepFunctionArn;
 
 interface CreateCampaignRequest {
+	campaignName: string,
 	message: string,
 	link: string,
 	businessId: string,
@@ -22,8 +23,9 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 	const campaignId = uuidv4();
 	const now = new Date().toISOString();
 
-	const auditRecord: PushItem = {
+	const auditRecord: Campaign = {
 		id: campaignId,
+		campaignName: request.campaignName,
 		campaignStatus: "SCHEDULED",
 		businessId: request.businessId,
 		message: request.message,
@@ -54,7 +56,7 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 
 }
 
-function messageAudit(newItem: PushItem): Promise<PushItem> {
+function messageAudit(newItem: Campaign): Promise<Campaign> {
 	return pushDao.create(newItem)
 	.then((result) => result)
 	.catch((e) => {

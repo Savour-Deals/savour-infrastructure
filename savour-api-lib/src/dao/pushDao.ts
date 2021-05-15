@@ -1,16 +1,16 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import PushItem from 'src/model/push';
+import Campaign from 'src/model/campaign';
 import DynamoDb from '../common/dynamodb-lib';
 
 const TABLE_NAME: string = process.env.pushMessageTable;
 
-async function create(pushItem: PushItem): Promise<PushItem> {
+async function create(campaign: Campaign): Promise<Campaign> {
 	const params: DocumentClient.PutItemInput = {
     TableName: TABLE_NAME,
-    Item: pushItem,
+    Item: campaign,
   };
   await DynamoDb.put(params);
-  return pushItem;
+  return campaign;
 }
 
 async function del(id: string): Promise<string> {
@@ -24,7 +24,7 @@ async function del(id: string): Promise<string> {
   return id;
 }
 
-async function getAllForBusiness(businessId: string): Promise<PushItem[]> {
+async function getAllForBusiness(businessId: string): Promise<Campaign[]> {
   const params: DocumentClient.QueryInput = {
     TableName: process.env.pushMessageTable,
     IndexName: "businessId-index",
@@ -36,10 +36,10 @@ async function getAllForBusiness(businessId: string): Promise<PushItem[]> {
   };
 
   const result = await DynamoDb.query(params);
-  return result.Items as PushItem[] || [];
+  return result.Items as Campaign[] || [];
 }
 
-async function get(id: string): Promise<PushItem> {
+async function get(id: string): Promise<Campaign> {
 	const params: DocumentClient.GetItemInput = {
     TableName: TABLE_NAME,
     Key: {
@@ -48,7 +48,7 @@ async function get(id: string): Promise<PushItem> {
   };
   const result = await DynamoDb.get(params);
   if (result.Item) {
-    return result.Item as PushItem;
+    return result.Item as Campaign;
   }
   return undefined;
 }
