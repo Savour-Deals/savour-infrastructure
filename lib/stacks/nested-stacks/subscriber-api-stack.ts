@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi } from "@aws-cdk/aws-apigateway";
+import { Cors, RestApi } from "@aws-cdk/aws-apigateway";
 
 export class SubscriberApiStack extends SavourApiNestedStack {
   readonly name = "subscriber";
@@ -14,7 +14,14 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("subscriber");
+    const apiResource = api.root.addResource("subscriber", {       
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
+    });
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
@@ -22,7 +29,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.PUT,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 
@@ -32,7 +39,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.GET,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 
@@ -42,7 +49,7 @@ export class SubscriberApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "mobile_number"
+        pathParameter: "mobileNumber"
       }
     }));
 

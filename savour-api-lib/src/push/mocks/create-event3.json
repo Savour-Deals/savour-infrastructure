@@ -1,0 +1,11 @@
+{
+  "body": "{\"unique_id\":\"3\",\"btn_id\":\"654321\",\"click_type\":\"DOUBLE\",\"timestamp\":\"2019-11-13T23:50:24.529394\",\"sent_map\":{\"+6124812069\":{\"status\":\"SENT\",\"timestamp\":\"2019-11-13T23:50:24.529394\"}}}",
+  "pathParameters": {
+    "mobile_number": "+1234565432"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

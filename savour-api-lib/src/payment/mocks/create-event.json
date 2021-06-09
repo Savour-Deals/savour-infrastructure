@@ -1,0 +1,11 @@
+{
+  "body": "{\"email\": \"test@test.com\",\"name\": \"name\",\"paymentMethod\": \"pm_1IVnkBFdZgF3d0XePxvH4pVP\",\"subscriptions\": {\"recurring\": \"price_1IR58xFdZgF3d0Xe5IaMr0KY\",\"usage\": \"price_1IV8SPFdZgF3d0XeK1qX4bW1\"}}",
+  "pathParameters": {
+    "id": "testBusiness"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

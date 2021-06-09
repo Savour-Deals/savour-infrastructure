@@ -4,7 +4,7 @@ import { PushApiStack } from './nested-stacks/push-api-stack';
 import { PaymentApiStack } from './nested-stacks/payment-api-stack';
 import { MessageApiStack } from './nested-stacks/message-api-stack';
 import { BusinessApiStack } from './nested-stacks/business-api-stack';
-import { StackProps } from "@aws-cdk/core";
+import { CfnResource, StackProps } from "@aws-cdk/core";
 import { App, Stack } from "@serverless-stack/resources";
 import { BusinessUserApiStack } from "./nested-stacks/business-user-api-stack";
 import { Deployment, Stage, RestApi, Cors } from "@aws-cdk/aws-apigateway"
@@ -22,7 +22,9 @@ export default class LambdaApiStack extends Stack {
     const restApi = new RestApi(this, `${scope.stage}-savour-rest-api`, {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
-        allowMethods: Cors.ALL_METHODS // this is also the default
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
       },
       deploy: false,
     });
@@ -64,8 +66,13 @@ export default class LambdaApiStack extends Stack {
     
     // Make sure all API stacks are deployed before deploying ApiGateway
     stacks.forEach((stack) => {
-      stack.apiLambdas.forEach((api) => deployment.node.addDependency(api.method))
+      stack.apiLambdas.forEach((api) => {
+        if (api.method){
+          (deployment.node.defaultChild! as CfnResource).addDependsOn(api.method.node.defaultChild as CfnResource)
+        }
+      }) 
     });
+
     new Stage(this, 'Stage', { deployment, stageName: `${scope.stage}` });
 
     const executeUrl = `https://${restApi.restApiId}.execute-api.${this.region}.amazonaws.com/${scope.stage}`;

@@ -1,0 +1,11 @@
+{
+  "body": "{\"customerId\":\"cus_JCXeq6ygQzlsbC\",\"paymentMethod\":\"pm_card_visa\"}",
+  "pathParameters": {
+    "id": "testBusiness"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "body": "{\"presetMessages\":[\"Preset 1\", \"Preset 2\", \"Preset new\"]}",
+  "pathParameters": {
+    "id": "testBusiness"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

@@ -1,47 +1,47 @@
-import { Construct } from "@aws-cdk/core";
+import { Construct, Duration } from "@aws-cdk/core";
+import { Queue } from '@aws-cdk/aws-sqs';
+import { RestApi, PassthroughBehavior, Cors } from "@aws-cdk/aws-apigateway"
+import { MappingTemplate } from '@aws-cdk/aws-appsync';
+import { WaitTime, Wait, TaskInput, StateMachine } from '@aws-cdk/aws-stepfunctions';
+import { SqsSendMessage } from '@aws-cdk/aws-stepfunctions-tasks';
+
+import { StringValue } from "../../constructs/ssm/string-value"
+import { Constants } from "../../constants/constants";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi, PassthroughBehavior } from "@aws-cdk/aws-apigateway"
-import { Constants } from "../../constants/constants";
-import { MappingTemplate } from '@aws-cdk/aws-appsync';
-import { StringValue } from "../../constructs/ssm/string-value"
 
 export class MessageApiStack extends SavourApiNestedStack {
   readonly name = "message";
+  private accountSid: string;
+  private authToken: string;
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApi', props);
 
-    const accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', '/twilio/accountSid');
-    const authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', '/twilio/authToken');
+    const stage = scope.node.tryGetContext('stage');
+    this.accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', `/twilio/accountSid/${stage}`);
+    this.authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', `/twilio/authToken/${stage}`);
 
+    const campaignStepFunction = this.createCampaignSteps();
 		const api = RestApi.fromRestApiAttributes(this, 'RestApi', {
       restApiId: props.restApiId,
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("message");
-
-    //TODO: Remove button API completely
-    // this.apiLambdas.push(new SavourApiLambda(this, {
-    //   api: this.name,
-    //   operation: "button",
-    //   environment: {
-    //     uuidSize: Constants.UUID_SIZE,
-    //     accountSid: accountSid,
-    //     authToken: authToken,
-    //     longUrlDomain: Constants.LONG_URL_DOMAIN,
-    //     shortUrlDomain: Constants.SHORT_URL_DOMAIN,
-    //   },
-    //   restApi: {
-    //     resource: apiResource.addResource('button'),
-    //     httpMethod: HttpMethod.POST,
-    //   }
-    // }));
+    const apiResource = api.root.addResource("message", {       
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
+    });
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "hooks",
+      memorySize: 512,
+      timeout: 60,
       restApi: {
         resource: apiResource.addResource('hooks'),
         httpMethod: HttpMethod.POST,
@@ -67,9 +67,11 @@ export class MessageApiStack extends SavourApiNestedStack {
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
       operation: "createNumber",
+      memorySize: 512,
+      timeout: 60,
       environment: {
-        accountSid: accountSid,
-        authToken: authToken,
+        accountSid: this.accountSid,
+        authToken: this.authToken,
         path: '/message/hooks'
       },
       restApi: {
@@ -78,19 +80,53 @@ export class MessageApiStack extends SavourApiNestedStack {
       }
     }));
 
-    this.apiLambdas.push(new SavourApiLambda(this, {
+    const createCampaignLambda = new SavourApiLambda(this, {
+      api: this.name,
+      operation: "createCampaign",
+      memorySize: 1024,
+      timeout: 900,
+      environment: {
+        campaignStepFunctionArn: campaignStepFunction.stateMachineArn
+      },
+      restApi: {
+        resource: apiResource.addResource('create'),
+        httpMethod: HttpMethod.POST,
+      }
+    });
+
+    this.apiLambdas.push(createCampaignLambda);
+    campaignStepFunction.grantStartExecution(createCampaignLambda.handler);
+  }
+
+  createCampaignSteps(): StateMachine {
+    const sqsQueue = new Queue(this, `sendMessageQueue`, {
+      visibilityTimeout: Duration.seconds(1000) //This must be longer than lambda timeout
+    });
+    new SavourApiLambda(this, {
       api: this.name,
       operation: "sendMessage",
+      memorySize: 1024,
+      timeout: 900,
       environment: {
-        accountSid: accountSid,
-        authToken: authToken,
+        accountSid: this.accountSid,
+        authToken: this.authToken,
         longUrlDomain: Constants.URL.LONG_DOMAIN,
         shortUrlDomain: Constants.URL.SHORT_DOMAIN,
       },
-      restApi: {
-        resource: apiResource.addResource('send'),
-        httpMethod: HttpMethod.POST,
-      }
-    }));
+      sqsQueue: sqsQueue
+    });
+
+    const waitStep = new Wait(this, "wait_for_campain_date_time", {
+      time: WaitTime.timestampPath("$.campaignDateTimeUtc")
+    });
+    const sqsStep = new SqsSendMessage(this, 'send_execute_campaign_sqs', {
+      queue: sqsQueue,
+      messageBody: TaskInput.fromDataAt('$.message')
+    });
+    const definition = waitStep.next(sqsStep);
+
+    return new StateMachine(this, 'ScheduleCampaignStateMachine', {
+      definition,
+    });
   }
 }

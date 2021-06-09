@@ -1,0 +1,11 @@
+{
+  "body":"{\"subscriptionId\":\"sub_JCXe8UDVxTIqL4\"}",
+  "pathParameters": {
+      "id": "testBusiness"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

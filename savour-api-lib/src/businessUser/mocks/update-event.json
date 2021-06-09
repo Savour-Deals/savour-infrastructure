@@ -1,0 +1,11 @@
+{
+  "body": "{\"email\":\"test1@test.com\",\"firstName\":\"Jon\",\"lastName\":\"Jones\",\"businesses\":\"[\"123456\"]\"}",
+  "pathParameters": {
+    "id": "123456"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

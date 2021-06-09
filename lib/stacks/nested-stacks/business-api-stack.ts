@@ -1,7 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { SavourApiLambda } from "../../constructs/lambda/savour-api-lambda";
 import { HttpMethod, SavourApiNestedStack, SavourApiNestedStackProps } from "../../constructs/nested-stack/api-nested-stack";
-import { RestApi } from "@aws-cdk/aws-apigateway";
+import { Cors, RestApi } from "@aws-cdk/aws-apigateway";
 
 export class BusinessApiStack extends SavourApiNestedStack {
   readonly name = "business";
@@ -14,7 +14,14 @@ export class BusinessApiStack extends SavourApiNestedStack {
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("business");
+    const apiResource = api.root.addResource("business", {       
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowMethods: Cors.ALL_METHODS, // this is also the default
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
+    });
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
@@ -22,7 +29,7 @@ export class BusinessApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.PUT,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     }));
 
@@ -32,7 +39,7 @@ export class BusinessApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.GET,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     }));
 
@@ -42,7 +49,7 @@ export class BusinessApiStack extends SavourApiNestedStack {
       restApi: {
         resource: apiResource,
         httpMethod: HttpMethod.DELETE,
-        pathParameter: "place_id"
+        pathParameter: "id"
       }
     }));
 

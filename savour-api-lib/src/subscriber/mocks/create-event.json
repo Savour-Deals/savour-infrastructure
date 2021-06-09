@@ -1,0 +1,8 @@
+{
+  "body": "{\"mobile_number\":\"+16124812069\",\"subscription_dict\":\"{}\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

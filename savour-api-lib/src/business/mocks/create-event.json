@@ -1,0 +1,8 @@
+{
+  "body": "{\"id\":\"testBusiness\",\"businessName\":\"Savour Deals\",\"presetMessages\":[\"Preset 1\", \"Preset 2\", \"Preset 3\"],\"onboardMessage\":\"Onboard message\",\"subscriberMap\":\"{}\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

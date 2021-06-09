@@ -1,0 +1,8 @@
+{
+  "body":"{\"message\":\"Test Message\", \"id\": \"testBusiness\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
