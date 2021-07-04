@@ -6,15 +6,22 @@ import Campaign from 'src/model/campaign';
 import { success, failure } from "../common/response-lib";
 import * as twilio from "../common/twilio-lib";
 
+import { Stripe } from "stripe";
+
 import shorten from '../url/shorten';
 import businessDao from 'src/dao/businessDao';
 import pushDao from "src/dao/pushDao";
+import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 const SHORT_DOMAIN: string = process.env.shortUrlDomain;
 
 interface SendMessageRequest {
 	campaignId: string,
 }
+
+const stripe = new Stripe(process.env.stripeKey, {
+	apiVersion: null, //null uses Stripe account's default version
+});
 
 export default async function main(event: SQSEvent): Promise<any> {
 	console.log(event);
@@ -29,6 +36,7 @@ export default async function main(event: SQSEvent): Promise<any> {
 
 async function handleSendMessageRecord(request: SendMessageRequest): Promise<any> {
 	let campaign: Campaign;
+	let businessStripId: string;
 
 	return pushDao.get(request.campaignId).then((campaignRecord) => {
 		campaign = campaignRecord;
@@ -54,6 +62,10 @@ async function handleSendMessageRecord(request: SendMessageRequest): Promise<any
     } else {
       throw new Error("Cound not find business to send message.");
     }
+	})
+	.then((results) => {
+		updateStripeUsage(businessStripId, results);
+		return results;
 	})
 	.then((results) =>  messageAudit({
 		...campaign,
@@ -85,4 +97,9 @@ async function messageAudit(auditRecord: Campaign): Promise<Campaign> {
 		//eat this error, the message already sent. This is just not ideal for data post processing
 		return auditRecord;
 	});
+}
+
+async function updateStripeUsage(stripeSubId: string, messages: Array<MessageInstance>) {
+	stripe.subscriptionItems.createUsageRecord()
+	return messages;
 }
