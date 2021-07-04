@@ -45,8 +45,11 @@ async function handleSendMessageRecord(request: SendMessageRequest): Promise<any
 		if (business) {
 			const businessNumber = business.messagingNumber;
       const subscribers = Object.entries(business.subscriberMap).filter(([_, subscriber]) => subscriber.subscribed);
-			const messagePromises = subscribers.map(([subscriberNumber, _]) => {
-				return twilio.sendMessage(businessNumber, subscriberNumber, campaign.message, shortLink)});
+			const messagePromises = subscribers.map(([subscriberNumber]) => twilio.sendMessage(businessNumber, subscriberNumber, campaign.message, shortLink));
+			
+			// FOR STRIPE USAGE UPDATE
+			// return length of messages for quantity
+			// stripeUsageSubItem will be the subscription item
 			return Promise.all(messagePromises);
     } else {
       throw new Error("Cound not find business to send message.");

@@ -14,11 +14,14 @@ export class MessageApiStack extends SavourApiNestedStack {
   readonly name = "message";
   private accountSid: string;
   private authToken: string;
+  private stripeKey: string;
 
   constructor(scope: Construct, props: SavourApiNestedStackProps) {
     super(scope, 'MessageApi', props);
 
     const stage = scope.node.tryGetContext('stage');
+
+    this.stripeKey = StringValue.fromSecureStringParameter(this, 'StripeSecretKey', `/stripe/secretKey/${stage}`);
     this.accountSid = StringValue.fromSecureStringParameter(this, 'TwilioAccountSid', `/twilio/accountSid/${stage}`);
     this.authToken = StringValue.fromSecureStringParameter(this, 'TwilioAuthToken', `/twilio/authToken/${stage}`);
 
@@ -86,7 +89,7 @@ export class MessageApiStack extends SavourApiNestedStack {
       memorySize: 1024,
       timeout: 900,
       environment: {
-        campaignStepFunctionArn: campaignStepFunction.stateMachineArn
+        campaignStepFunctionArn: campaignStepFunction.stateMachineArn,
       },
       restApi: {
         resource: apiResource.addResource('create'),
@@ -110,6 +113,7 @@ export class MessageApiStack extends SavourApiNestedStack {
       environment: {
         accountSid: this.accountSid,
         authToken: this.authToken,
+        stripeKey: this.stripeKey,
         longUrlDomain: Constants.URL.LONG_DOMAIN,
         shortUrlDomain: Constants.URL.SHORT_DOMAIN,
       },
