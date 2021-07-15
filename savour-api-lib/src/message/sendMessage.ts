@@ -100,6 +100,9 @@ async function messageAudit(auditRecord: Campaign): Promise<Campaign> {
 }
 
 async function updateStripeUsage(stripeSubId: string, messages: Array<MessageInstance>) {
-	stripe.subscriptionItems.createUsageRecord()
+	stripe.subscriptionItems.createUsageRecord(stripeSubId, {
+		quantity: messages.length,
+		timestamp: Math.floor(Date.now() / 1000),
+	})
 	return messages;
 }
