@@ -29,10 +29,12 @@ export interface SavourApiLambdaProps {
 export class SavourApiLambda extends Construct {
 	public method?: Method;
 	public handler: lambda.Function;
+	private authRequired: boolean;
 	
-	constructor(scope: Construct, props: SavourApiLambdaProps) {
+	constructor(scope: Construct, props: SavourApiLambdaProps, authRequired = true) {
 		super(scope, `${props.api}-${props.operation}`);
 
+		this.authRequired = authRequired;
 		const stage = scope.node.tryGetContext('stage');
 		const commonEnv = {
 			businessTable: Fn.importValue(`${stage}-Business-TableName`),
@@ -117,7 +119,7 @@ export class SavourApiLambda extends Construct {
 		}
 		
 		this.method = apiResource.addMethod(restApi.httpMethod, new LambdaIntegration(this.handler, integrationOptions), {
-				authorizationType: AuthorizationType.IAM,
+				authorizationType: this.authRequired ? AuthorizationType.IAM : AuthorizationType.NONE,
 				methodResponses: methodResponses,
 			}
 		);

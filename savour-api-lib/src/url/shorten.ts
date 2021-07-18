@@ -12,11 +12,10 @@ function randomString(length: number): string {
 export default async function main(longUrl: string, shortUrlDomain: string): Promise<string> {
 	if (!longUrl) return;
 	
-	
 	let attempt = 0;
 	while (attempt < 5) {
 		attempt++;
-		const token = randomString(tokenSize);
+		const token = randomString(tokenSize || 6);
 		const shortUrl = `${shortUrlDomain}/${token}`;
 		try {
 			await redirectDao.create({

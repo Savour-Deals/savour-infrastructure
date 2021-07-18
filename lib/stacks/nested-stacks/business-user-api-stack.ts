@@ -60,6 +60,6 @@ export class BusinessUserApiStack extends SavourApiNestedStack {
         resource: apiResource,
         httpMethod: HttpMethod.POST,
       }
-    }));
+    }, false));
   }
 }
