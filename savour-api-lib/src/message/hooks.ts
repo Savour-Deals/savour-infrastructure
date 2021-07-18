@@ -29,7 +29,7 @@ export default async function main(event: HooksLambdaInput): Promise<string> {
 
 function wrapBody(body: string): string {
   console.log(`Response: ${body}`);
-  return `<?xml version="1.0" encoding="UTF-8"?><Response><sMessage>${body}</sMessage></Response>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${body}</Message></Response>`;
 }
 
 function updateSubscription(userNumber: string, business: Business, subscribe: boolean): Promise<[Business, SubscriberUser]> {
@@ -88,13 +88,13 @@ async function subscribeUser(userNumber: string, businessNumber: string): Promis
   }).then((result) => {
     if (result.business && result.user) {
       if (result.business.id in Object.keys(result.user.subscriptionMap)) {
-        return `You're already subscribed to our ${result.business.id} loyalty program! \u{1f923} Reply HELP for help or STOP to unsubscribe. Msg and Data Rates May Apply.`;
+        return `You're already subscribed to ${result.business.id}! \u{1f923} Reply HELP for help or STOP to unsubscribe. Msg and Data Rates May Apply.`;
       } else {
         return updateSubscription(userNumber, result.business, true).then(() => {
-          return `Welcome back to our ${result.business.businessName} loyalty program! \u{1f64c} Reply HELP for help or STOP to unsubscribe. Msg and Data Rates May Apply.`;
+          return `${result.business.onboardMessage} Reply HELP for help or STOP to unsubscribe. Msg and Data Rates May Apply.`;
         });
       }
     }
-    return 'Sorry, this number is not associated with any of our Savour Loyalty Programs. \u{1F62C}'
+    return 'Sorry, this number is not associated with any of our Savour Messaging Programs. \u{1F62C}'
   });
 }
