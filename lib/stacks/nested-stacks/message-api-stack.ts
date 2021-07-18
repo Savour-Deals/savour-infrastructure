@@ -58,6 +58,9 @@ export class MessageApiStack extends SavourApiNestedStack {
             {
               statusCode: "200",
               selectionPattern: "",
+              responseParameters: {
+                'method.response.header.Content-Type': "'application/xml'",
+              },
               responseTemplates: {
                 'application/xml': MappingTemplate.fromFile('./resources/mapping/twilio-response.vtl').renderTemplate()
               }
@@ -65,7 +68,7 @@ export class MessageApiStack extends SavourApiNestedStack {
           ]
         }
       }
-    }));
+    }, false));
 
     this.apiLambdas.push(new SavourApiLambda(this, {
       api: this.name,
