@@ -88,7 +88,7 @@ async function subscribeUser(userNumber: string, businessNumber: string): Promis
   }).then((result) => {
     if (result.business && result.user) {
       const subscription: SubscriberInfo = result.user.subscriptionMap[result.business.id];
-      if (subscription!.subscribed) {
+      if (subscription && subscription.subscribed) {
         return `You're already subscribed to ${result.business.businessName}! \u{1f923} Reply HELP for help or STOP to unsubscribe. Msg and Data Rates May Apply.`;
       } else {
         return updateSubscription(userNumber, result.business, true).then(() => {

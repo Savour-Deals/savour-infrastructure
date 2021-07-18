@@ -54,8 +54,6 @@ export class PaymentApiStack extends SavourApiNestedStack {
       operation: "createCustomer",
       environment: {
         stripeKey: stripeKey,
-        recurringPlanID: Constants.STRIPE.RECURRING_PLAN_ID,
-        usagePlanID: Constants.STRIPE.USAGE_PLAN_ID
       },
       restApi: {
         resource: subscriptionResource,

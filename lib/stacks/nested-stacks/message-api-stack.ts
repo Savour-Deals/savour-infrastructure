@@ -117,7 +117,6 @@ export class MessageApiStack extends SavourApiNestedStack {
         accountSid: this.accountSid,
         authToken: this.authToken,
         stripeKey: this.stripeKey,
-        longUrlDomain: Constants.URL.LONG_DOMAIN,
         shortUrlDomain: Constants.URL.SHORT_DOMAIN,
       },
       sqsQueue: sqsQueue
