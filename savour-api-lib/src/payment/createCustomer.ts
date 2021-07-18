@@ -55,8 +55,8 @@ export default async function main(event: APIGatewayProxyEvent): Promise<APIGate
 		business.stripeCustomerId = subscription.customer as string;
 		business.stripePaymentMethod = request.paymentMethod;
 		business.stripeSubId = subscription.id;
-		business.stripeRecurringSubItem = request.subscriptions.recurring;
-		business.stripeUsageSubItem = request.subscriptions.usage ;
+		business.stripeRecurringSubItem = subscription.items.data.find(i => i.price.id === request.subscriptions.recurring).id;
+		business.stripeUsageSubItem = subscription.items.data.find(i => i.price.id === request.subscriptions.usage).id;
 		
 		return businessDao.update(business.id, business)
 		.then((result) => success(result))

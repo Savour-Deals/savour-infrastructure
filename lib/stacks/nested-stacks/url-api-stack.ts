@@ -70,6 +70,6 @@ export class UrlApiStack extends SavourApiNestedStack {
           ],
         }
       }
-    }));
+    }, false));
   }
 }
