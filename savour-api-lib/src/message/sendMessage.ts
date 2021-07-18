@@ -36,7 +36,7 @@ export default async function main(event: SQSEvent): Promise<any> {
 
 async function handleSendMessageRecord(request: SendMessageRequest): Promise<any> {
 	let campaign: Campaign;
-	let businessStripId: string;
+	let usageSubId: string;
 
 	return pushDao.get(request.campaignId).then((campaignRecord) => {
 		campaign = campaignRecord;
@@ -52,8 +52,10 @@ async function handleSendMessageRecord(request: SendMessageRequest): Promise<any
 		
 		if (business) {
 			const businessNumber = business.messagingNumber;
+			usageSubId = business.stripeUsageSubItem;
+			const message = `${business.businessName}: ${campaign.message}`;
       const subscribers = Object.entries(business.subscriberMap).filter(([_, subscriber]) => subscriber.subscribed);
-			const messagePromises = subscribers.map(([subscriberNumber]) => twilio.sendMessage(businessNumber, subscriberNumber, campaign.message, shortLink));
+			const messagePromises = subscribers.map(([subscriberNumber]) => twilio.sendMessage(businessNumber, subscriberNumber, message, shortLink));
 			
 			// FOR STRIPE USAGE UPDATE
 			// return length of messages for quantity
@@ -64,7 +66,7 @@ async function handleSendMessageRecord(request: SendMessageRequest): Promise<any
     }
 	})
 	.then((results) => {
-		updateStripeUsage(businessStripId, results);
+		updateStripeUsage(usageSubId, results);
 		return results;
 	})
 	.then((results) =>  messageAudit({
