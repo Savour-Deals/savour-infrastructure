@@ -14,7 +14,7 @@ export class UrlApiStack extends SavourApiNestedStack {
       rootResourceId: props.rootResourceId,
     });
 
-    const apiResource = api.root.addResource("url", {       
+    const apiResource = api.root.addResource("u", {       
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
         allowMethods: Cors.ALL_METHODS, // this is also the default
@@ -70,6 +70,6 @@ export class UrlApiStack extends SavourApiNestedStack {
           ],
         }
       }
-    }));
+    }, false));
   }
 }
